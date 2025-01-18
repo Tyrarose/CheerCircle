@@ -1,3 +1,37 @@
+# CheerCircle
+
+CheerCircle is an interactive, personalized slam book web application where friends can fill out quirky and fun questions, and see their answers transformed into a personalized visual summary. Each person gets their own page with cute sticky note-style text blocks and the ability to customize their layout and aesthetic.
+
+## Features
+
+- **Link Sharing:** Main sender generates a unique link to share with friends.
+- **Personalized Pages:** Each friend customizes their own page with different aesthetic options.
+- **Dynamic Visual Summary:** Automatically generates a poster or page summarizing each friend’s answers.
+- **Collaborative Slam Book:** Aggregates all responses in a collaborative flipbook-style format.
+- **Download & Share:** Friends can download their visual summary or share it on social media.
+
+## Tech Stack
+
+- **Frontend:** React.js, Next.js
+- **Backend:** Node.js
+- **Database:** Supabase
+- **Hosting:** Vercel / Netlify (for easy deployment)
+
+## Getting Started
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/CheerCircle.git
+
+
+
+
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
