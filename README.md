@@ -17,20 +17,25 @@ CheerCircle is an interactive, personalized slam book web application where frie
 - **Database:** Supabase
 - **Hosting:** Vercel / Netlify (for easy deployment)
 
+
+## Helpful links
+- **UML:** https://drive.google.com/file/d/1v9xqp3d-kzfBggWjZRZaHRJCkd14N69c/view?usp=sharing
+- **Flow Diagrams:** https://www.figma.com/board/01OcYsyGcoBzvToVF8QSIT/CheerCircle?node-id=0-1&t=22QR7M4zUKZAB2vs-1
+
+
+
+
+
+
+
+
+
+
 ## Getting Started
 
 1. Clone the repository
    ```bash
    git clone https://github.com/YOUR_USERNAME/CheerCircle.git
-
-
-
-
-
-
-
-
-
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
