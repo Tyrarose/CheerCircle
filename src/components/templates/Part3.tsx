@@ -42,35 +42,20 @@ const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
     }
   };
 
-  const saveFormData = () => {
-    const formData = { ...answers };
-
-    if (selectedBonus) {
-      formData[selectedBonus] = bonusAnswers[selectedBonus];
-    }
-
-    const jsonString = JSON.stringify(formData, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "part3-answers.json";
-    document.body.appendChild(a);
-    a.click();
-
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  // Save form data function
+  const saveFormData = async (formData: { [key: string]: any }) => {
+    localStorage.setItem("part3-answers", JSON.stringify(formData));
   };
 
   const handleNext = async () => {
-    await saveFormData();
+    await saveFormData(answers);
     onNext();
   };
 
   const isPrevEnabled = false;
 
   const handlePrev = async () => {
+    await saveFormData(answers);
     onPrev();
   };
 

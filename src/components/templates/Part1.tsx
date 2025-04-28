@@ -9,6 +9,7 @@ import ExpandableQA from "@/components/molecules/ExpandableQA";
 import Divider from "@/components/atoms/Divider";
 import Button from "@/components/atoms/Button";
 import QandAlong from "@/components/molecules/QandA-long";
+import Label from "@/components/atoms/Label";
 
 const Part1 = ({ onNext }: { onNext: () => void }) => {
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({
@@ -49,28 +50,19 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
 
   // Save form data function
   const saveFormData = async (formData: { [key: string]: any }, imageData: { [key: string]: File | null }) => {
-    const JSZip = require("jszip");
-    const zip = new JSZip();
-    
-    const jsonString = JSON.stringify(formData, null, 2);
-    zip.file("part1-answers.json", jsonString);
+    // Save text answers
+    localStorage.setItem("part1-answers", JSON.stringify(formData));
 
+    // Save images separately
     for (const [key, file] of Object.entries(imageData)) {
       if (file) {
-        const fileData = await file.arrayBuffer();
-        zip.file(`${key}.jpg`, fileData);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          localStorage.setItem(`part1-image-${key}`, reader.result as string); // Save as base64 string
+        };
+        reader.readAsDataURL(file);
       }
     }
-
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-    const zipUrl = URL.createObjectURL(zipBlob);
-    const zipLink = document.createElement("a");
-    zipLink.href = zipUrl;
-    zipLink.download = "part1.zip";
-    document.body.appendChild(zipLink);
-    zipLink.click();
-    document.body.removeChild(zipLink);
-    URL.revokeObjectURL(zipUrl);
   };
 
   const isNextEnabled =
@@ -101,35 +93,35 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
       
       <div className="space-y-6">
         <TaskPicture
-          labelText="Make a funny face!"
+          labelText={<Label text="Make a funny face!" isRequired />}
           imageSrc={imagePreviews.funnyFace}
           altText="Funny face"
           imageKey="funnyFace"
           onImageChange={handleImageChange("funnyFace")} // Corrected call
         />
         <QandAshort
-          labelText="Full name?"
+          labelText={<Label text="Full name?" isRequired />}
           inputId="fullname"
           inputPlaceholder="eg. Joe Stone Doctor"
           value={answers.fullname}
           onChange={handleInputChange("fullname")}
         />
         <TaskPicture
-          labelText="Crack a big smile!"
+          labelText={<Label text="Crack a big smile!" isRequired />}
           imageSrc={imagePreviews.bigSmile}
           altText="Big smile"
           imageKey="bigSmile"
           onImageChange={handleImageChange("bigSmile")}
         />
         <QandAshort
-          labelText="Birthday?"
+          labelText={<Label text="Birthday?" isRequired />}
           inputId="birthday"
           inputPlaceholder="eg. April 27, 2001"
           value={answers.birthday}
           onChange={handleInputChange("birthday")}
         />
         <TaskPicture
-          labelText="Show me your best look/pic!"
+          labelText={<Label text="Show me your best look/pic!" isRequired />}
           imageSrc={imagePreviews.bestLook}
           altText="Best look"
           imageKey="bestLook"
@@ -137,7 +129,7 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
         />
         
         <QuestionAndChips
-          question="Favorite color?"
+          labelText={<Label text="Favorite color?" isRequired />}
           chips={[
             { label: "Red", color: "bg-red-five" },
             { label: "Blue", color: "bg-blue-five" },
@@ -155,7 +147,7 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
         />
 
         <QuestionAndChips
-          question="One word that describes you?"
+          labelText={<Label text="One word that describes you?" isRequired />}
           chips={[
             { label: "Calm", color: "bg-blue-five" },
             { label: "Adventurous", color: "bg-green-five" },
@@ -173,7 +165,7 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
         <Divider text="Optional" />
 
         <QandAshort
-          labelText="Nickname or username?"
+          labelText={<Label text="Nickname or username?" />}
           inputId="nickname"
           inputPlaceholder="eg. DoctorJoe"
           value={answers.nickname}

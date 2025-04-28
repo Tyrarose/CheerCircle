@@ -12,7 +12,7 @@ import Part5 from "../../components/templates/Part5";
 import Part6 from "../../components/templates/Part6";
 import Part7 from "../../components/templates/Part7";
 import Final from "../../components/templates/Final";
-import {FormProvider} from '../../contexts/FormContext';
+import {FormProvider} from '../../context/FormContext';
 
 
 const Quiz = () => {

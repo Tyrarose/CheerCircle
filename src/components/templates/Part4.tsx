@@ -45,37 +45,20 @@ const Part4 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
     setAnswers((prev) => ({ ...prev, [key]: value.trim() }));
   };
 
-  // Function to save form data as a JSON file, including all answers
-  const saveFormData = () => {
-    const formData = { ...answers };
-
-    // Only include the bonus answer from the selected question
-    if (selectedBonus) {
-      formData[selectedBonus] = bonusAnswers[selectedBonus];
-    }
-
-    const jsonString = JSON.stringify(formData, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "part4-answers.json";
-    document.body.appendChild(a);
-    a.click();
-
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  // Save form data function
+  const saveFormData = async (formData: { [key: string]: any }) => {
+    localStorage.setItem("part2-answers", JSON.stringify(formData));
   };
 
   const handleNext = async () => {
-    await saveFormData();
+    await saveFormData(answers);
     onNext();
   };
 
   const isPrevEnabled = false;
 
   const handlePrev = async () => {
+    await saveFormData(answers);
     onPrev();
   };
 

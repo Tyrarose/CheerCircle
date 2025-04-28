@@ -30,29 +30,21 @@ const Part6 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
     answers.hobby,
   ].every((value) => value.trim() !== "");
 
-  // Reusable save method to export data as JSON
-  const saveFormData = () => {
-    const jsonString = JSON.stringify(answers, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "part6-answers.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  // Save form data function
+  const saveFormData = async (formData: { [key: string]: any }) => {
+    localStorage.setItem("part2-answers", JSON.stringify(formData));
   };
 
   // Handle Next button click
   const handleNext = async () => {
-    saveFormData();
+    await saveFormData(answers);
     onNext();
   };
 
   const isPrevEnabled = false;
 
   const handlePrev = async () => {
+    await saveFormData(answers);
     onPrev();
   };
 

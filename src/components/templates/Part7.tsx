@@ -25,30 +25,20 @@ const Part7 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
     setAnswers((prev) => ({ ...prev, [key]: value.trim() }));
   };
 
-  // Reusable save method to export data as JSON
-  const saveFormData = () => {
-    const jsonString = JSON.stringify(answers, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "part7-answers.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  // Save form data function
+  const saveFormData = async (formData: { [key: string]: any }) => {
+    localStorage.setItem("part2-answers", JSON.stringify(formData));
   };
 
   // Handle Submit button click
   const handleSubmit = async () => {
-    saveFormData();
-    // Show a confirmation message or redirect if needed
-    alert("Your answers have been saved!");
+    await saveFormData(answers);
   };
 
   const isPrevEnabled = false;
 
   const handlePrev = async () => {
+    await saveFormData(answers);
     onPrev();
   };
 

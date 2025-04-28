@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 
 interface TaskPictureProps {
-  labelText: string;
+  labelText: React.ReactNode;
   imageSrc: string;
   altText?: string;
   imageKey: string;

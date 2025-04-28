@@ -35,7 +35,7 @@ CheerCircle is an interactive, personalized slam book web application where frie
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/YOUR_USERNAME/CheerCircle.git
+   git clone https://github.com/tyrarose/CheerCircle.git
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
