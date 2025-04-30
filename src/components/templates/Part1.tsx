@@ -1,5 +1,3 @@
-// Part1.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -10,6 +8,7 @@ import QuestionAndChips from "@/components/organisms/QuestionAndChips";
 import Divider from "@/components/atoms/Divider";
 import Button from "@/components/atoms/Button";
 import QandAlong from "@/components/molecules/QandA-long";
+import DatePicker from "@/components/molecules/DatePicker";
 import Label from "@/components/atoms/Label";
 import { useFormContext } from "@/context/FormContext";
 
@@ -22,6 +21,7 @@ const Part1 = ({ onNext, cacheImage }: Part1Props) => {
   const { updateField, getField, formData } = useFormContext();
   const [favoriteColor, setFavoriteColor] = useState<string>("");
   const [wordToDescribe, setWordToDescribe] = useState<string>("");
+  const [birthday, setBirthday] = useState<Date | undefined>(undefined);
 
   const defaultImages = {
     funnyFace: "/images/part1/frame-1.png",
@@ -44,9 +44,25 @@ const Part1 = ({ onNext, cacheImage }: Part1Props) => {
     // Load selected chips from form context
     const savedColor = getField("part1", "favoriteColor");
     const savedWord = getField("part1", "wordToDescribe");
+    const savedBirthday = getField("part1", "birthday");
     
     if (savedColor) setFavoriteColor(savedColor);
     if (savedWord) setWordToDescribe(savedWord);
+    if (savedBirthday && savedBirthday.trim() !== "") {
+      try {
+        // Parse MM-DD-YYYY format
+        const [month, day, year] = savedBirthday.split('-').map(num => parseInt(num, 10));
+        const date = new Date(year, month - 1, day);
+        
+        // Check if valid date
+        if (!isNaN(date.getTime())) {
+          setBirthday(date);
+        }
+      } catch (error) {
+        console.error("Error parsing saved birthday:", error);
+        setBirthday(undefined);
+      }
+    }
 
     // Load images from localStorage
     const keys = ["funnyFace", "bigSmile", "bestLook"];
@@ -66,6 +82,20 @@ const Part1 = ({ onNext, cacheImage }: Part1Props) => {
 
   const handleInputChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     updateField("part1", key, e.target.value);
+  };
+  
+  const handleBirthdayChange = (date: Date | undefined) => {
+    setBirthday(date);
+    // Store the birthday in MM-DD-YYYY format
+    if (date) {
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear();
+      const formattedDate = `${month}-${day}-${year}`;
+      updateField("part1", "birthday", formattedDate);
+    } else {
+      updateField("part1", "birthday", "");
+    }
   };
 
   const handleChipSelect = (key: string, value: string) => {
@@ -128,12 +158,11 @@ const Part1 = ({ onNext, cacheImage }: Part1Props) => {
           imageKey="bigSmile"
           onImageChange={handleImageChange("bigSmile")}
         />
-        <QandAshort
-          labelText={<Label text="Birthday?" isRequired />}
-          inputId="birthday"
-          inputPlaceholder="eg. April 27, 2001"
-          value={getField("part1", "birthday")}
-          onChange={handleInputChange("birthday")}
+        <DatePicker
+          pickedDate={birthday}
+          onChange={handleBirthdayChange}
+          label="When's your birthday?"
+          isRequired
         />
         <TaskPicture
           labelText={<Label text="Show me your best look/pic!" isRequired />}

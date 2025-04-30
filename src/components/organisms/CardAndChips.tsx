@@ -8,21 +8,22 @@ interface CardAndChipsProps {
   bgColor: string;
   question: string;
   followUpQuestion: string;
+
   chips: { label: string; color: string }[];
   onChipSelect: (value: string) => void;
+  selectedChip: string | null;
 }
 
 const CardAndChips: FC<CardAndChipsProps> = ({ 
   bgColor, 
   question, 
   followUpQuestion, 
-  chips, 
-  onChipSelect 
-}) => {
-  const [selectedChip, setSelectedChip] = useState<string | null>(null);
 
+  chips = [], 
+  onChipSelect,
+  selectedChip,
+}) => {
   const handleChipSelect = (label: string) => {
-    setSelectedChip(label);
     onChipSelect(label);
   };
 
@@ -39,8 +40,8 @@ const CardAndChips: FC<CardAndChipsProps> = ({
         <div className="flex flex-grow justify-center items-center">
           <ChipGroup 
             chips={chips} 
-            selectedChip={selectedChip} 
             onChipSelect={handleChipSelect} 
+            selectedChip={selectedChip} 
           />
         </div>
       </div>

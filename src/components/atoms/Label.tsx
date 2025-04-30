@@ -1,7 +1,7 @@
 import React from "react";
 
 interface LabelProps {
-  text: string;
+  text: React.ReactNode;
   isRequired?: boolean;
 }
 

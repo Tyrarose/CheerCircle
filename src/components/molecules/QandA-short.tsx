@@ -3,7 +3,7 @@ import React from "react";
 interface QandAProps {
   labelText: React.ReactNode;
   inputId: string;
-  inputPlaceholder: string; // Ensure this is always a string
+  inputPlaceholder: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
