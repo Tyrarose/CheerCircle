@@ -1,57 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
-
+import React, { useEffect } from "react";
 import ProgressBar from "@/components/molecules/ProgressBar";
 import Button from "@/components/atoms/Button";
 import CardAndChips from "@/components/organisms/CardAndChips";
 import ExpandableQA from "@/components/molecules/ExpandableQA";
+import { useFormContext } from '../../context/FormContext';
 
-
-const Part6 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) => {
-
-  const [answers, setAnswers] = useState({
-    riseOrSet: "",
-    riseOrSetWhy: "",
-    dogOrCat: "",
-    dogOrCatWhy: "",
-    flavors: "",
-    hobby: "",
-    });
+const Part6 = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
+  const { updateField, getField } = useFormContext();
 
   const handleChipSelect = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }));
+    updateField('part6', key, value);
   };
 
   const isNextEnabled = [
-    answers.riseOrSet,
-    answers.dogOrCat,
-    answers.flavors,
-    answers.hobby,
-  ].every((value) => value.trim() !== "");
+    getField('part6', 'riseOrSet'),
+    getField('part6', 'dogOrCat'),
+    getField('part6', 'flavors'),
+    getField('part6', 'hobby'),
+  ].every((value) => value?.trim() !== "");
 
-  // Save form data function
-  const saveFormData = async (formData: { [key: string]: any }) => {
-    localStorage.setItem("part2-answers", JSON.stringify(formData));
-  };
-
-  // Handle Next button click
-  const handleNext = async () => {
-    await saveFormData(answers);
-    onNext();
-  };
-
-  const isPrevEnabled = false;
-
-  const handlePrev = async () => {
-    await saveFormData(answers);
-    onPrev();
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="max-w-screen-md mx-auto space-y-6">
       <div className="w-full">
-        <ProgressBar totalSteps={6} currentStep={6} />
+        <ProgressBar totalSteps={7} currentStep={6} />
       </div>
 
       <div className="w-full text-center">
@@ -71,9 +48,8 @@ const Part6 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
           
         />
         <ExpandableQA 
-          question={"Mind explaning why did you choose your previous answer?"} 
-          onChange={(value) => setAnswers((prev) => ({ ...prev, riseOrSetWhy: value }))} 
-
+          question="Mind explaining why did you choose your previous answer?" 
+          onChange={(value) => updateField('part6', 'riseOrSetWhy', value)} 
         />
         <CardAndChips
           bgColor="bg-yellow-seven"
@@ -87,8 +63,8 @@ const Part6 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
           onChipSelect={(value) => handleChipSelect("dogOrCat", value)}
         />
         <ExpandableQA 
-          question={"Mind explaning why did you choose your previous answer?"}
-          onChange={(value) => setAnswers((prev) => ({ ...prev, dogOrCatWhy: value }))} 
+          question="Mind explaining why did you choose your previous answer?"
+          onChange={(value) => updateField('part6', 'dogOrCatWhy', value)} 
         />
         <CardAndChips
           bgColor="bg-yellow-seven"
@@ -101,7 +77,6 @@ const Part6 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
               { color: "bg-blue-five", label: "Sour" },
             ]}
           onChipSelect={(value) => handleChipSelect("flavors", value)}
-          
         />
         <CardAndChips
           bgColor="bg-yellow-seven"
@@ -119,10 +94,10 @@ const Part6 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
 
       {/* Sticky Next Button */}
       <div className="fixed bottom-0 left-0 w-full bg-yellow-eight shadow-lg p-4 flex justify-center">
-        <Button onClick={handlePrev} disabled={isPrevEnabled}>
+        <Button onClick={onPrevious}>
           Previous
         </Button>
-        <Button onClick={handleNext} disabled={!isNextEnabled}>
+        <Button onClick={onNext} disabled={!isNextEnabled}>
           Next
         </Button>
       </div>

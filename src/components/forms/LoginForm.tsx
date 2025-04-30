@@ -1,6 +1,7 @@
 "use client";
 
 import {useState} from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   UserIcon,
@@ -9,6 +10,7 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/solid";
+import Link from "next/link";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,9 +19,30 @@ const LoginForm = () => {
     setShowPassword((prevState) => !prevState);
   };
 
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Simulate login delay (replace with actual login logic)
+    setTimeout(() => {
+      setLoading(false);
+      router.push("/quiz");
+    }, 2000);
+  };
+
   return (
     <div className="flex items-center justify-center">
-      <form className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
+      <form onSubmit={handleSubmit} className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
+        <Link href="/">
+          <img 
+            src="/images/android-chrome-192x192.png" 
+            alt="" 
+            className="rounded-full mx-auto h-10 mb-6" 
+          />
+        </Link>
         <h1 className="text-2xl font-bold text-black mb-4 text-left">
           Login to CheerCircle
         </h1>
@@ -81,16 +104,20 @@ const LoginForm = () => {
         {/* Login Button */}
         <button
           type="submit"
-          className="w-full py-2 bg-yellow-five text-black-five font-semibold rounded-lg hover:bg-yellow-six transition duration-300 mb-4"
+          className="w-full py-2 bg-yellow-five text-black-five font-semibold rounded-lg hover:bg-yellow-six transition duration-300 mb-4 flex items-center justify-center gap-2"
+          disabled={loading}
         >
-          Login
+          <span>Login</span>
+          {loading && (
+            <span className="w-4 h-4 border-2 border-black-five border-t-transparent rounded-full animate-spin"></span>
+          )}
         </button>
 
         {/* Register Link */}
         <p className="text-left text-sm text-gray-600">
           Don’t have an account?{" "}
           <a
-            href="#"
+            href="/register"
             className="text-blue-six font-medium hover:underline"
           >
             Register

@@ -1,114 +1,129 @@
+// Part1.tsx
+
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProgressBar from "@/components/molecules/ProgressBar";
 import QandAshort from "@/components/molecules/QandA-short";
 import TaskPicture from "@/components/molecules/TaskPicture";
 import QuestionAndChips from "@/components/organisms/QuestionAndChips";
-import ExpandableQA from "@/components/molecules/ExpandableQA";
 import Divider from "@/components/atoms/Divider";
 import Button from "@/components/atoms/Button";
 import QandAlong from "@/components/molecules/QandA-long";
 import Label from "@/components/atoms/Label";
+import { useFormContext } from "@/context/FormContext";
 
-const Part1 = ({ onNext }: { onNext: () => void }) => {
-  const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({
+interface Part1Props {
+  onNext: () => void;
+  cacheImage: (key: string, file: File) => void;
+}
+
+const Part1 = ({ onNext, cacheImage }: Part1Props) => {
+  const { updateField, getField, formData } = useFormContext();
+  const [favoriteColor, setFavoriteColor] = useState<string>("");
+  const [wordToDescribe, setWordToDescribe] = useState<string>("");
+
+  const defaultImages = {
     funnyFace: "/images/part1/frame-1.png",
     bigSmile: "/images/part1/frame-2.png",
     bestLook: "/images/part1/frame-3.png",
+  };
+
+  const [imageUrls, setImageUrls] = useState<{
+    funnyFace: string | null;
+    bigSmile: string | null;
+    bestLook: string | null;
+  }>({
+    funnyFace: null,
+    bigSmile: null,
+    bestLook: null,
   });
 
-  const [answers, setAnswers] = useState({
-    fullname: "",
-    birthday: "",
-    favoriteColor: "",
-    wordToDescribe: "",
-    nickname: "",
-    usernameStory: "",
-    funFact: "",
-  });
+  // Load saved data on component mount
+  useEffect(() => {
+    // Load selected chips from form context
+    const savedColor = getField("part1", "favoriteColor");
+    const savedWord = getField("part1", "wordToDescribe");
+    
+    if (savedColor) setFavoriteColor(savedColor);
+    if (savedWord) setWordToDescribe(savedWord);
 
-  const [images, setImages] = useState<{ [key: string]: File | null }>({});
-
-  // Generic input change handler
-  const handleInputChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAnswers((prev) => ({ ...prev, [key]: e.target.value }));
-  };
-
-  // Generic chip selection handler
-  const handleChipSelect = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }));
-  };
-
-  // Generic image change handler
-  const handleImageChange = (key: string) => (file: File) => {
-    setImages((prev) => ({ ...prev, [key]: file }));
-    const imageUrl = URL.createObjectURL(file);
-    setImagePreviews((prev) => ({ ...prev, [key]: imageUrl }));
-  };
-
-
-  // Save form data function
-  const saveFormData = async (formData: { [key: string]: any }, imageData: { [key: string]: File | null }) => {
-    // Save text answers
-    localStorage.setItem("part1-answers", JSON.stringify(formData));
-
-    // Save images separately
-    for (const [key, file] of Object.entries(imageData)) {
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          localStorage.setItem(`part1-image-${key}`, reader.result as string); // Save as base64 string
-        };
-        reader.readAsDataURL(file);
+    // Load images from localStorage
+    const keys = ["funnyFace", "bigSmile", "bestLook"];
+    const savedImages: {[key: string]: string | null} = {};
+    
+    keys.forEach(key => {
+      const savedImage = localStorage.getItem(`part1_image_${key}`);
+      if (savedImage && savedImage.trim() !== "") {
+        savedImages[key] = savedImage;
       }
+    });    
+    
+    if (Object.keys(savedImages).length > 0) {
+      setImageUrls(prev => ({...prev, ...savedImages}));
     }
+  }, [getField]);
+
+  const handleInputChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateField("part1", key, e.target.value);
   };
+
+  const handleChipSelect = (key: string, value: string) => {
+    updateField("part1", key, value);
+  
+    if (key === "favoriteColor") {
+      setFavoriteColor(value);
+    } else if (key === "wordToDescribe") {
+      setWordToDescribe(value);
+    }
+  };  
+
+  const handleImageChange = (key: string) => (file: File) => {
+    const imageUrl = URL.createObjectURL(file);
+    setImageUrls(prev => ({ ...prev, [key]: imageUrl }));
+    cacheImage(key, file);
+  };
+
+  const getImageSource = (key: keyof typeof defaultImages) => {
+    const cachedUrl = imageUrls[key];
+    if (cachedUrl && cachedUrl.trim() !== "") return cachedUrl;
+  
+    const savedImage = localStorage.getItem(`part1_image_${key}`);
+    if (savedImage && savedImage.trim() !== "") return savedImage;
+  
+    return defaultImages[key];
+  };
+  
 
   const isNextEnabled =
-    Object.values(images).some((file) => file !== null) &&
-    answers.favoriteColor.trim() !== "" &&
-    answers.wordToDescribe.trim() !== "" &&
-    answers.fullname.trim() !== "" &&
-    answers.birthday.trim() !== "";
-
-  const handleNext = async () => {
-    await saveFormData(answers, images);
-    onNext();
-  };
-
-  const isPrevEnabled = true;
-
-  const handlePrev = async () => {
-    await saveFormData(answers, images);
-    onNext();
-  };
+    getField("part1", "favoriteColor").trim() !== "" &&
+    getField("part1", "wordToDescribe").trim() !== "" &&
+    getField("part1", "fullname").trim() !== "" &&
+    getField("part1", "birthday").trim() !== "";
 
   return (
     <div className="max-w-screen-md mx-auto space-y-6 pb-20">
-      {/* Progress Bar */}
       <ProgressBar totalSteps={6} currentStep={1} />
-      
       <h1 className="text-2xl font-bold text-center">Part 01. Profile</h1>
-      
+
       <div className="space-y-6">
         <TaskPicture
           labelText={<Label text="Make a funny face!" isRequired />}
-          imageSrc={imagePreviews.funnyFace}
+          imageSrc={getImageSource("funnyFace")}
           altText="Funny face"
           imageKey="funnyFace"
-          onImageChange={handleImageChange("funnyFace")} // Corrected call
+          onImageChange={handleImageChange("funnyFace")}
         />
         <QandAshort
           labelText={<Label text="Full name?" isRequired />}
           inputId="fullname"
           inputPlaceholder="eg. Joe Stone Doctor"
-          value={answers.fullname}
+          value={getField("part1", "fullname")}
           onChange={handleInputChange("fullname")}
         />
         <TaskPicture
           labelText={<Label text="Crack a big smile!" isRequired />}
-          imageSrc={imagePreviews.bigSmile}
+          imageSrc={getImageSource("bigSmile")}
           altText="Big smile"
           imageKey="bigSmile"
           onImageChange={handleImageChange("bigSmile")}
@@ -117,17 +132,17 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
           labelText={<Label text="Birthday?" isRequired />}
           inputId="birthday"
           inputPlaceholder="eg. April 27, 2001"
-          value={answers.birthday}
+          value={getField("part1", "birthday")}
           onChange={handleInputChange("birthday")}
         />
         <TaskPicture
           labelText={<Label text="Show me your best look/pic!" isRequired />}
-          imageSrc={imagePreviews.bestLook}
+          imageSrc={getImageSource("bestLook")}
           altText="Best look"
           imageKey="bestLook"
           onImageChange={handleImageChange("bestLook")}
         />
-        
+
         <QuestionAndChips
           labelText={<Label text="Favorite color?" isRequired />}
           chips={[
@@ -144,6 +159,7 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
             { label: "Gray", color: "bg-gray-five" },
           ]}
           onChipSelect={(color) => handleChipSelect("favoriteColor", color)}
+          selectedChip={favoriteColor}
         />
 
         <QuestionAndChips
@@ -160,41 +176,36 @@ const Part1 = ({ onNext }: { onNext: () => void }) => {
             { label: "Innocent", color: "bg-white" },
           ]}
           onChipSelect={(word) => handleChipSelect("wordToDescribe", word)}
+          selectedChip={wordToDescribe}
         />
-        
-        <Divider text="Optional" />
-
+        <Divider />
         <QandAshort
           labelText={<Label text="Nickname or username?" />}
           inputId="nickname"
           inputPlaceholder="eg. DoctorJoe"
-          value={answers.nickname}
+          value={getField("part1", "nickname")}
           onChange={handleInputChange("nickname")}
         />
-        
-        <ExpandableQA
-          question="Any cool story behind it?"
-          onChange={(value) => setAnswers((prev) => ({ ...prev, usernameStory: value }))} 
+
+        <QandAlong
+          labelText="Any cool story behind it?"
+          inputId="usernameStory"
+          inputPlaceholder="Share something fun!"
+          value={getField("part1", "usernameStory")}
+          onChange={(e) => updateField("part1", "usernameStory", e.target.value)}
         />
-        
-        <Divider text="Bonus Question (Skip if you want)" />
+
         <QandAlong
           labelText="Random fun fact about you? Or just anything random at all."
           inputId="funFact"
           inputPlaceholder="Share something fun!"
-          value={answers.funFact || ""}
-          onChange={(e) => setAnswers((prev) => ({ ...prev, funFact: e.target.value }))} 
+          value={getField("part1", "funFact")}
+          onChange={(e) => updateField("part1", "funFact", e.target.value)}
         />
       </div>
-      
-      {/* Sticky Next Button */}
+
       <div className="fixed bottom-0 left-0 w-full bg-yellow-eight shadow-lg p-4 flex justify-center">
-        <Button onClick={handlePrev} disabled={isPrevEnabled}>
-          Previous
-        </Button>
-        <Button onClick={handleNext} disabled={!isNextEnabled}>
-          Next
-        </Button>
+        <Button onClick={onNext} disabled={!isNextEnabled}>Next</Button>
       </div>
     </div>
   );

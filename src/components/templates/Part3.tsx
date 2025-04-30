@@ -1,62 +1,33 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import ProgressBar from "@/components/molecules/ProgressBar";
 import Divider from "@/components/atoms/Divider";
 import Button from "@/components/atoms/Button";
 import CardTextInput from "@/components/organisms/CardTextInput";
+import { useFormContext } from '../../context/FormContext';
 
-const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) => {
-  const [answers, setAnswers] = useState<{ [key: string]: string }>({
-    animals: "",
-    emoji: "",
-    neverForget: "",
-  });
-
-  const [bonusAnswers, setBonusAnswers] = useState<{ [key: string]: string }>({
-    dessert: "",
-    adventure: "",
-    song: "",
-  });
-
-  const [selectedBonus, setSelectedBonus] = useState<string | null>(null);
+const Part3 = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
+  const { formData, updateField, getField } = useFormContext();
 
   const requiredFields = ["animals", "emoji", "neverForget"];
+  const bonusFields = ["dessert", "adventure", "song"];
+  const [selectedBonus, setSelectedBonus] = React.useState<string | null>(null);
 
-  const isNextEnabled = requiredFields.every((key) => answers[key]?.trim() !== "");
+  const isNextEnabled = requiredFields.every((field) => 
+    getField('part3', field)?.trim() !== '');
 
-  const handleAnswerChange = (key: string, value: string, isBonus: boolean = false) => {
-    if (isBonus) {
-      setBonusAnswers((prev) => ({ ...prev, [key]: value }));
-    } else {
-      setAnswers((prev) => ({ ...prev, [key]: value }));
-    }
+  const handleAnswerChange = (key: string, value: string) => {
+    updateField('part3', key, value);
   };
 
   const handleBonusSelection = (key: string) => {
     if (selectedBonus === key) {
       setSelectedBonus(null);
-      setBonusAnswers((prev) => ({ ...prev, [key]: "" }));
+      updateField('part3', key, "");
     } else {
       setSelectedBonus(key);
     }
-  };
-
-  // Save form data function
-  const saveFormData = async (formData: { [key: string]: any }) => {
-    localStorage.setItem("part3-answers", JSON.stringify(formData));
-  };
-
-  const handleNext = async () => {
-    await saveFormData(answers);
-    onNext();
-  };
-
-  const isPrevEnabled = false;
-
-  const handlePrev = async () => {
-    await saveFormData(answers);
-    onPrev();
   };
 
   useEffect(() => {
@@ -66,7 +37,7 @@ const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
   return (
     <div className="max-w-screen-md mx-auto space-y-6">
       <div className="w-full">
-        <ProgressBar totalSteps={6} currentStep={3} />
+        <ProgressBar totalSteps={7} currentStep={3} />
       </div>
 
       <div className="w-full text-center">
@@ -75,13 +46,25 @@ const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
 
       <div className="w-full space-y-6">
         {/* Required Questions */}
-        {["animals", "emoji", "neverForget"].map((key) => (
+        {requiredFields.map((key) => (
           <CardTextInput
             key={key}
-            bgColor={key === "animals" ? "bg-blue-seven" : key === "emoji" ? "bg-red-seven" : "bg-yellow-seven"}
-            question={key === "animals" ? "If we were animals, what would we be?" : key === "emoji" ? "One emoji or word that describes me?" : "Something I did that you’d #NeverForget?"}
-            followUpQuestion={key === "animals" ? "Who would be the predator? We’re both prey?" : key === "neverForget" ? "and why?" : ""}
-            value={answers[key]}
+            bgColor={
+              key === "animals" ? "bg-blue-seven" 
+              : key === "emoji" ? "bg-red-seven" 
+              : "bg-yellow-seven"
+            }
+            question={
+              key === "animals" ? "If we were animals, what would we be?" 
+              : key === "emoji" ? "One emoji or word that describes me?" 
+              : "Something I did that you'd #NeverForget?"
+            }
+            followUpQuestion={
+              key === "animals" ? "Who would be the predator? We're both prey?" 
+              : key === "neverForget" ? "and why?" 
+              : ""
+            }
+            value={getField('part3', key)}
             onChange={(value) => handleAnswerChange(key, value)}
           />
         ))}
@@ -89,7 +72,7 @@ const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
         <Divider text="PICK ONE Bonus Question (Skip if you want)" />
 
         {/* Bonus Questions */}
-        {["dessert", "adventure", "song"].map((bonusKey) => (
+        {bonusFields.map((bonusKey) => (
           <div
             key={bonusKey}
             className={`transition-opacity duration-300 ${selectedBonus && selectedBonus !== bonusKey ? "opacity-50" : ""}`}
@@ -111,8 +94,8 @@ const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
                   ? "Where would we go first?"
                   : "Why?"
               }
-              value={bonusAnswers[bonusKey]}
-              onChange={(value) => handleAnswerChange(bonusKey, value, true)}
+              value={getField('part3', bonusKey)}
+              onChange={(value) => handleAnswerChange(bonusKey, value)}
             />
           </div>
         ))}
@@ -120,10 +103,10 @@ const Part3 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
 
       {/* Sticky Next Button */}
       <div className="fixed bottom-0 left-0 w-full bg-yellow-eight shadow-lg p-4 flex justify-center">
-        <Button onClick={handlePrev} disabled={isPrevEnabled}>
+        <Button onClick={onPrevious}>
           Previous
         </Button>
-        <Button onClick={handleNext} disabled={!isNextEnabled}>
+        <Button onClick={onNext} disabled={!isNextEnabled}>
           Next
         </Button>
       </div>

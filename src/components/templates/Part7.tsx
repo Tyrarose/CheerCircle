@@ -1,51 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
-
+import React, { useEffect } from "react";
 import ProgressBar from "@/components/molecules/ProgressBar";
 import Button from "@/components/atoms/Button";
 import CardAndChips from "@/components/organisms/CardAndChips";
 import CardTextInput from "@/components/organisms/CardTextInput";
+import { useFormContext } from '../../context/FormContext';
 
-const Part7 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) => {
-  const [answers, setAnswers] = useState<{ [key: string]: string }>({
-    skill: "",
-    wantToTry: "",
-    bucketList: "",
-    buyDreamHome: "",
-    ChildhoodActivity: "",
-    exploreGoal: "",
-  });
+const Part7 = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
+  const { updateField, getField, submitAllData } = useFormContext();
 
   const handleAnswerChange = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }));
+    updateField('part7', key, value);
   };
 
   const handleChipSelect = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value.trim() }));
+    updateField('part7', key, value.trim());
   };
 
-  // Save form data function
-  const saveFormData = async (formData: { [key: string]: any }) => {
-    localStorage.setItem("part2-answers", JSON.stringify(formData));
-  };
-
-  // Handle Submit button click
-  const handleSubmit = async () => {
-    await saveFormData(answers);
-  };
-
-  const isPrevEnabled = false;
-
-  const handlePrev = async () => {
-    await saveFormData(answers);
-    onPrev();
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="max-w-screen-md mx-auto space-y-6">
       <div className="w-full">
-        <ProgressBar totalSteps={6} currentStep={6} />
+        <ProgressBar totalSteps={7} currentStep={7} />
       </div>
 
       <div className="w-full text-center">
@@ -55,21 +35,21 @@ const Part7 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
       <div className="w-full space-y-6">
         <CardTextInput
           bgColor="bg-red-seven"
-          question="Master any skill instantly—what’s it gonna be?"
+          question="Master any skill instantly—what's it gonna be?"
           followUpQuestion=""
-          value={answers.skill}
+          value={getField('part7', 'skill')}
           onChange={(value) => handleAnswerChange("skill", value)}
         />
         <CardTextInput
           bgColor="bg-green-seven"
-          question="Always wanted to try but haven’t—why?"
+          question="Always wanted to try but haven't—why?"
           followUpQuestion=""
-          value={answers.wantToTry}
+          value={getField('part7', 'wantToTry')}
           onChange={(value) => handleAnswerChange("wantToTry", value)}
         />
         <CardAndChips
           bgColor="bg-blue-seven"
-          question="What’s a bucket list item you’re excited to check off soon—and does it involve a dream destination?"
+          question="What's a bucket list item you're excited to check off soon—and does it involve a dream destination?"
           followUpQuestion="To where?"
           chips={[
             { color: "bg-green-five", label: "A quiet beach" },
@@ -81,34 +61,37 @@ const Part7 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
         />
         <CardTextInput
           bgColor="bg-yellow-seven"
-          question="First thing you’d buy for your dream home?"
+          question="First thing you'd buy for your dream home?"
           followUpQuestion=""
-          value={answers.buyDreamHome}
+          value={getField('part7', 'buyDreamHome')}
           onChange={(value) => handleAnswerChange("buyDreamHome", value)}
         />
         <CardTextInput
           bgColor="bg-red-seven"
           question="Childhood activity you stopped but wanna try again?"
           followUpQuestion=""
-          value={answers.ChildhoodActivity}
+          value={getField('part7', 'ChildhoodActivity')}
           onChange={(value) => handleAnswerChange("ChildhoodActivity", value)}
         />
         <CardTextInput
           bgColor="bg-green-seven"
-          question="Small goal/hobby you’d love to explore?"
+          question="Small goal/hobby you'd love to explore?"
           followUpQuestion=""
-          value={answers.exploreGoal}
+          value={getField('part7', 'exploreGoal')}
           onChange={(value) => handleAnswerChange("exploreGoal", value)}
         />
       </div>
 
       {/* Sticky Next Button */}
       <div className="fixed bottom-0 left-0 w-full bg-yellow-eight shadow-lg p-4 flex justify-center">
-        <Button onClick={handlePrev} disabled={isPrevEnabled}>
+        <Button onClick={onPrevious}>
           Previous
         </Button>
-        <Button onClick={handleSubmit} disabled={false}>
-          SUBMIT ANSWER !!!
+        <Button onClick={() => {
+          submitAllData();
+          onNext();
+        }}>
+          SUBMIT ANSWERS !!!
         </Button>
       </div>
     </div>

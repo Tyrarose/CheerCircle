@@ -30,18 +30,13 @@ const Header: React.FC = () => {
         <nav className="hidden sm:flex">
           <ul className="flex items-center gap-6">
             <li>
-              <a href="#" className="text-gray-600 hover:text-gray-800">
+              <a href="/" className="text-gray-600 hover:text-gray-800">
                 Home
               </a>
             </li>
             <li>
               <a href="#" className="text-gray-600 hover:text-gray-800">
                 About
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-gray-600 hover:text-gray-800">
-                Contact
               </a>
             </li>
           </ul>

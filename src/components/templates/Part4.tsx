@@ -1,65 +1,32 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-
+import React, { useEffect } from "react";
 import ProgressBar from "@/components/molecules/ProgressBar";
 import Divider from "@/components/atoms/Divider";
 import Button from "@/components/atoms/Button";
 import CardAndChips from "@/components/organisms/CardAndChips";
 import CardTextInput from "@/components/organisms/CardTextInput";
 import QandAlong from "@/components/molecules/QandA-long";
+import { useFormContext } from '../../context/FormContext';
 
-const Part4 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) => {
-  const [answers, setAnswers] = useState<{ [key: string]: string }>({
-    superpower: "",
-    season: "",
-    era: "",
-    googled: "",
-    million: "",
-    moneyNotIssue: "",
-  });
-
-  const [selectedBonus, setSelectedBonus] = useState<string | null>(null);
-  const [bonusAnswers, setBonusAnswers] = useState<{ [key: string]: string }>({
-    moneyNotIssue: "",
-  });
+const Part4 = ({ onNext, onPrevious }: { onNext: () => void; onPrevious: () => void }) => {
+  const { updateField, getField } = useFormContext();
 
   // Required questions list
   const requiredFields = ["superpower", "season", "era", "googled", "million"];
 
   // Check if all required questions are answered
-  const isNextEnabled = requiredFields.every((key) => answers[key]?.trim() !== "");
+  const isNextEnabled = requiredFields.every((key) => 
+    getField('part4', key)?.trim() !== '');
 
-  // Handle answer change for required questions
+  // Handle answer change for text inputs
   const handleAnswerChange = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }));
+    updateField('part4', key, value);
   };
 
-  // Handle answer change for bonus questions
-  const handleBonusAnswerChange = (key: string, value: string) => {
-    setBonusAnswers((prev) => ({ ...prev, [key]: value }));
-  };
-
-  // Handle chip selection for required questions
+  // Handle chip selection
   const handleChipSelect = (key: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [key]: value.trim() }));
-  };
-
-  // Save form data function
-  const saveFormData = async (formData: { [key: string]: any }) => {
-    localStorage.setItem("part2-answers", JSON.stringify(formData));
-  };
-
-  const handleNext = async () => {
-    await saveFormData(answers);
-    onNext();
-  };
-
-  const isPrevEnabled = false;
-
-  const handlePrev = async () => {
-    await saveFormData(answers);
-    onPrev();
+    updateField('part4', key, value.trim());
   };
 
   useEffect(() => {
@@ -69,7 +36,7 @@ const Part4 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
   return (
     <div className="max-w-screen-md mx-auto space-y-6">
       <div className="w-full">
-        <ProgressBar totalSteps={6} currentStep={4} />
+        <ProgressBar totalSteps={7} currentStep={4} />
       </div>
 
       <div className="w-full text-center">
@@ -93,7 +60,7 @@ const Part4 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
           bgColor="bg-blue-seven"
           question="Dream superpower?"
           followUpQuestion=""
-          value={answers.superpower}
+          value={getField('part4', 'superpower')}
           onChange={(value) => handleAnswerChange("superpower", value)}
         />
         <CardAndChips
@@ -103,22 +70,22 @@ const Part4 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
           chips={[
             { color: "bg-green-five", label: "Ancient Times" },
             { color: "bg-yellow-five", label: "The 1800s" },
-            { color: "bg-red-five", label: "The Roaring ‘20s" },
-            { color: "bg-blue-five", label: "The ‘80s" },
+            { color: "bg-red-five", label: "The Roaring '20s" },
+            { color: "bg-blue-five", label: "The '80s" },
             { color: "bg-violet-five", label: "The Future" },
           ]}
           onChipSelect={(value) => handleChipSelect("era", value)}
         />
         <CardTextInput
           bgColor="bg-blue-seven"
-          question="What’s the last thing you Googled?"
+          question="What's the last thing you Googled?"
           followUpQuestion=""
-          value={answers.googled}
+          value={getField('part4', 'googled')}
           onChange={(value) => handleAnswerChange("googled", value)}
         />
         <CardAndChips
           bgColor="bg-yellow-seven"
-          question="First thing you’d do with a million?"
+          question="First thing you'd do with a million?"
           followUpQuestion=""
           chips={[
             { color: "bg-green-five", label: "Travel the world" },
@@ -130,20 +97,20 @@ const Part4 = ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void; }) 
         />
         <Divider text="Follow up Question (Skip if you want)" />
         <QandAlong
-          labelText="If money wasn’t an issue, how would you spend your time?"
-          inputId=""
+          labelText="If money wasn't an issue, how would you spend your time?"
+          inputId="moneyNotIssue"
           inputPlaceholder=""
-          value={answers.moneyNotIssue || ""}
-          onChange={(e) => setAnswers((prev) => ({ ...prev, moneyNotIssue: e.target.value }))} 
+          value={getField('part4', 'moneyNotIssue')}
+          onChange={(e) => updateField('part4', 'moneyNotIssue', e.target.value)} 
         />
       </div>
 
       {/* Sticky Next Button */}
       <div className="fixed bottom-0 left-0 w-full bg-yellow-eight shadow-lg p-4 flex justify-center">
-        <Button onClick={handlePrev} disabled={isPrevEnabled}>
+        <Button onClick={onPrevious}>
           Previous
         </Button>
-        <Button onClick={handleNext} disabled={!isNextEnabled}>
+        <Button onClick={onNext} disabled={!isNextEnabled}>
           Next
         </Button>
       </div>

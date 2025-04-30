@@ -12,7 +12,7 @@ const QandAshort: React.FC<QandAProps> = ({ labelText, inputId, inputPlaceholder
   return (
     <div className="flex items-center justify-center w-full">
       <form className="w-full">
-        <div className="mb-4">
+        <div>
           <label htmlFor={inputId} className="block text-sm font-semibold text-black-five mb-1">
             {labelText}
           </label>
