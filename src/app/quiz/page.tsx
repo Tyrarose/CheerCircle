@@ -10,7 +10,7 @@ import Part4 from "../../pages/Part4";
 import Part5 from "../../pages/Part5";
 import Part6 from "../../pages/Part6";
 import Part7 from "../../pages/Part7";
-import Final from "../../components/templates/Final";
+import Result from "@/app/result/page";
 import { FormProvider } from '../../context/FormContext';
 
 const QUIZ_PARTS = [
@@ -21,7 +21,7 @@ const QUIZ_PARTS = [
   { Component: Part5, showPrevious: true },
   { Component: Part6, showPrevious: true },
   { Component: Part7, showPrevious: true },
-  { Component: Final, showPrevious: true, isFinal: true },
+  { Component: Result, showPrevious: true, isFinal: true },
 ];
 
 const QuizContent = () => {

@@ -15,7 +15,7 @@ export const Part7Config: QuizPartConfig = {
       bgColor: "bg-red-seven",
       question: "Master any skill instantly—what's it gonna be?",
       followUpQuestion: "",
-      isRequired: true,
+      isRequired: false,
     },
     {
         key: "wantToTry",
@@ -23,7 +23,7 @@ export const Part7Config: QuizPartConfig = {
         bgColor: "bg-green-seven",
         question: "Always wanted to try but haven't—why?",
         followUpQuestion: "",
-        isRequired: true,
+        isRequired: false,
     },
     {
         key: "bucketList",
@@ -37,7 +37,7 @@ export const Part7Config: QuizPartConfig = {
             { color: "bg-red-five", label: "Historical landmarks" },
             { color: "bg-blue-five", label: "Off-the-grid wilderness" },
         ], 
-        isRequired: true,
+        isRequired: false,
     },
     {
         key: "buyDreamHome",
@@ -45,7 +45,7 @@ export const Part7Config: QuizPartConfig = {
         bgColor: "bg-yellow-seven",
         question: "First thing you'd buy for your dream home?",
         followUpQuestion: "",
-        isRequired: true,
+        isRequired: false,
     },
     {
         key: "ChildhoodActivity",
@@ -53,7 +53,7 @@ export const Part7Config: QuizPartConfig = {
         bgColor: "bg-red-seven",
         question: "Childhood activity you stopped but wanna try again?",
         followUpQuestion: "",
-        isRequired: true,
+        isRequired: false,
     },
     {
         key: "exploreGoal",
@@ -61,7 +61,7 @@ export const Part7Config: QuizPartConfig = {
         bgColor: "bg-green-seven",
         question: "Small goal/hobby you'd love to explore?",
         followUpQuestion: "",
-        isRequired: true,
+        isRequired: false,
     },
   ],
 };

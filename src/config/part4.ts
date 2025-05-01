@@ -83,7 +83,7 @@ export const Part4Config: QuizPartConfig = {
         key: "moneyNotIssue",
         type: "QandAlong",
         bgColor: "bg-green-seven",
-        question: "First thing you'd do with a million?",
+        question: "If money wasn’t an issue, how would you spend your time?",
         followUpQuestion: "(Skip if you want)",
         isRequired: false,
       },

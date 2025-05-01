@@ -8,8 +8,6 @@ export const Part1Config: QuizPartConfig = {
   totalSteps: 6,
   defaultImages: {
     funnyFace: "/images/part1/frame-1.png",
-    bigSmile: "/images/part1/frame-2.png",
-    bestLook: "/images/part1/frame-3.png",
   },
   requiredFields: [
     "favoriteColor",
@@ -32,22 +30,17 @@ export const Part1Config: QuizPartConfig = {
       isRequired: true,
     },
     {
-      key: "bigSmile",
-      type: "TaskPicture",
-      question: "Crack a big smile!",
-      isRequired: false,
-    },
-    {
       key: "birthday",
       type: "DatePicker",
       question: "When's your birthday?",
       isRequired: true,
     },
     {
-      key: "bestLook",
-      type: "TaskPicture",
-      question: "Show me your best look/pic!",
-      isRequired: false,
+      key: "nickname",
+      type: "QandAshort",
+      question: "Nickname or username?",
+      inputPlaceholder: "eg. DoctorJoe",
+      isRequired: true,
     },
     {
       key: "favoriteColor",
@@ -86,22 +79,28 @@ export const Part1Config: QuizPartConfig = {
       isRequired: true,
     },
     {
+      key: "loveLanguage",
+      type: "QuestionAndChips",
+      question: "Love Language (receive)?",
+      options: [
+        { label: "Acts of Service", color: "bg-red-five" },
+        { label: "Receiving gifts", color: "bg-blue-five" },
+        { label: "Quality time", color: "bg-green-five" },
+        { label: "Words of Affirmation", color: "bg-yellow-five" },
+        { label: "Physical Touch", color: "bg-pink-five" },
+      ],
+      isRequired: true,
+    },
+    {
       key: "divider",
       type: "Divider",
       question: "",
       isRequired: false,
     },
     {
-      key: "nickname",
-      type: "QandAshort",
-      question: "Nickname or username?",
-      inputPlaceholder: "eg. DoctorJoe",
-      isRequired: false,
-    },
-    {
       key: "usernameStory",
       type: "QandAlong",
-      question: "Any cool story behind it?",
+      question: "Any cool story behind the username/nickname?",
       inputPlaceholder: "Share something fun!",
       isRequired: false,
     },

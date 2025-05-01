@@ -17,7 +17,7 @@ export const Part3Config: QuizPartConfig = {
       type: "CardTextInput",
       bgColor: "bg-blue-seven",
       question: "If we were animals, what would we be?",
-      followUpQuestion: "Who would be the predator? We're both prey?",
+      followUpQuestion: "Who would be the predator? We're both prey? We're both cats!",
       isRequired: true,
     },
     {

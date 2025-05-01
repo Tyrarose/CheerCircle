@@ -32,11 +32,6 @@ const formatDate = (date: Date | undefined): string => {
   });
 };
 
-// Get days in a month
-const getDaysInMonth = (year: number, month: number): number => {
-  return new Date(year, month + 1, 0).getDate();
-};
-
 // ---------- SVG Icons ----------
 const CalendarIcon: React.FC = () => (
   <svg
@@ -98,96 +93,80 @@ const Calendar: React.FC<CalendarProps> = ({
   const [viewDate, setViewDate] = useState<Date>(
     pickedDate || new Date()
   );
+  const [mode, setMode] = useState<"day" | "month" | "year">("year");
 
-  // Days of the week
+  const currentYear = viewDate.getFullYear();
+  const currentMonth = viewDate.getMonth();
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  // Get month and year for header
-  const monthYear = viewDate.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
+  const getDaysInMonth = (year: number, month: number) =>
+    new Date(year, month + 1, 0).getDate();
 
-  // Get first day of the month (0-6, Sunday is 0)
-  const firstDayOfMonth = new Date(
-    viewDate.getFullYear(),
-    viewDate.getMonth(),
-    1
-  ).getDay();
+  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
-  // Get days in month (28-31)
-  const daysInMonth = getDaysInMonth(
-    viewDate.getFullYear(),
-    viewDate.getMonth()
-  );
-
-  // Handle month navigation
-  const prevMonth = () => {
-    setViewDate(
-      new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1)
-    );
+  const handleMonthClick = (month: number) => {
+    setViewDate(new Date(currentYear, month, 1));
+    setMode("day");
   };
 
-  const nextMonth = () => {
-    setViewDate(
-      new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1)
-    );
+  const handleYearClick = (year: number) => {
+    setViewDate(new Date(year, currentMonth, 1));
+    setMode("month");
   };
 
-  // Check if a day is the selected date
-  const isSelectedDay = (day: number): boolean => {
-    if (!pickedDate) return false;
-    return (
-      day === pickedDate.getDate() &&
-      viewDate.getMonth() === pickedDate.getMonth() &&
-      viewDate.getFullYear() === pickedDate.getFullYear()
-    );
+  const selectDay = (day: number) => {
+    const newDate = new Date(currentYear, currentMonth, day);
+    onChange?.(newDate);
   };
 
-  // Check if a day is today
   const isToday = (day: number): boolean => {
     const today = new Date();
     return (
       day === today.getDate() &&
-      viewDate.getMonth() === today.getMonth() &&
-      viewDate.getFullYear() === today.getFullYear()
+      currentMonth === today.getMonth() &&
+      currentYear === today.getFullYear()
     );
   };
 
-  // Handle day selection
-  const selectDay = (day: number) => {
-    const newDate = new Date(
-      viewDate.getFullYear(),
-      viewDate.getMonth(),
-      day
+  const isSelectedDay = (day: number): boolean => {
+    if (!pickedDate) return false;
+    return (
+      day === pickedDate.getDate() &&
+      currentMonth === pickedDate.getMonth() &&
+      currentYear === pickedDate.getFullYear()
     );
-    onChange?.(newDate);
   };
 
-  return (
-    <div className={cn("p-3 select-none", className)}>
-      {/* Header - Month and Year */}
-      <div className="flex items-center justify-between mb-2">
-        <button
-          type="button"
-          onClick={prevMonth}
-          className="p-2 rounded-md hover:bg-gray-100 focus:outline-none"
-          aria-label="Previous month"
-        >
-          <ChevronLeftIcon />
+  const renderHeader = () => (
+    <div className="flex items-center justify-between mb-2">
+      <button onClick={() => {
+        if (mode === "year") setViewDate(new Date(currentYear - 12, 0, 1));
+        else if (mode === "month") setViewDate(new Date(currentYear - 1, 0, 1));
+        else setViewDate(new Date(currentYear, currentMonth - 1, 1));
+      }} className="p-2 rounded-md hover:bg-gray-100">
+        <ChevronLeftIcon />
+      </button>
+      <div className="flex items-center gap-2">
+        <button onClick={() => setMode("month")} className="font-semibold">
+          {viewDate.toLocaleDateString("en-US", { month: "long" })}
         </button>
-        <div className="font-medium">{monthYear}</div>
-        <button
-          type="button"
-          onClick={nextMonth}
-          className="p-2 rounded-md hover:bg-gray-100 focus:outline-none"
-          aria-label="Next month"
-        >
-          <ChevronRightIcon />
+        <button onClick={() => setMode("year")} className="font-semibold">
+          {currentYear}
         </button>
       </div>
+      <button onClick={() => {
+        if (mode === "year") setViewDate(new Date(currentYear + 12, 0, 1));
+        else if (mode === "month") setViewDate(new Date(currentYear + 1, 0, 1));
+        else setViewDate(new Date(currentYear, currentMonth + 1, 1));
+      }} className="p-2 rounded-md hover:bg-gray-100">
+        <ChevronRightIcon />
+      </button>
+    </div>
+  );
 
-      {/* Days of week header */}
+  const renderDays = () => (
+    <>
       <div className="grid grid-cols-7 gap-1 mb-1">
         {daysOfWeek.map((day) => (
           <div key={day} className="text-center text-xs text-gray-500 py-1">
@@ -195,24 +174,18 @@ const Calendar: React.FC<CalendarProps> = ({
           </div>
         ))}
       </div>
-
-      {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-1">
-        {/* Empty spaces for days before the first day of month */}
         {Array.from({ length: firstDayOfMonth }).map((_, i) => (
           <div key={`empty-${i}`} className="h-8 w-8" />
         ))}
-
-        {/* Days of the month */}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
           return (
             <button
-              key={`day-${day}`}
-              type="button"
+              key={day}
               onClick={() => selectDay(day)}
               className={cn(
-                "h-8 w-8 rounded-md flex items-center justify-center text-sm focus:outline-none",
+                "h-8 w-8 rounded-md text-sm flex items-center justify-center",
                 isSelectedDay(day) && "bg-black text-white",
                 isToday(day) && !isSelectedDay(day) && "border border-gray-300",
                 !isSelectedDay(day) && "hover:bg-gray-100"
@@ -223,6 +196,54 @@ const Calendar: React.FC<CalendarProps> = ({
           );
         })}
       </div>
+    </>
+  );
+
+  const renderMonths = () => {
+    const months = Array.from({ length: 12 }, (_, i) =>
+      new Date(0, i).toLocaleString("default", { month: "short" })
+    );
+
+    return (
+      <div className="grid grid-cols-4 gap-2">
+        {months.map((month, i) => (
+          <button
+            key={month}
+            onClick={() => handleMonthClick(i)}
+            className="p-2 rounded-md hover:bg-gray-100 text-sm"
+          >
+            {month}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const renderYears = () => {
+    const startYear = currentYear - 35;
+    const years = Array.from({ length: 50 }, (_, i) => startYear + i);
+
+    return (
+      <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+        {years.map((year) => (
+          <button
+            key={year}
+            onClick={() => handleYearClick(year)}
+            className="p-2 rounded-md hover:bg-gray-100 text-sm"
+          >
+            {year}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className={cn("p-3 select-none", className)}>
+      {renderHeader()}
+      {mode === "day" && renderDays()}
+      {mode === "month" && renderMonths()}
+      {mode === "year" && renderYears()}
     </div>
   );
 };
@@ -256,11 +277,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
     };
   }, [open]);
 
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = event.target.value ? new Date(event.target.value) : undefined;
-    if (onChange) onChange(newDate);
-  };
-
   return (
     <div className={cn("w-full", className)}>
       {labelText && (
@@ -290,6 +306,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                 setOpen(false);
               }}
             />
+            
           </div>
         )}
       </div>
@@ -297,5 +314,4 @@ const DatePicker: React.FC<DatePickerProps> = ({
   );
 };
 
-// Export the DatePicker component as the default export
 export default DatePicker;

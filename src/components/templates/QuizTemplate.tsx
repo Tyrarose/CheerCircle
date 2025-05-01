@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { format } from "date-fns"; 
 
 import ProgressBar from "@/components/molecules/ProgressBar";
 import QandAshort from "@/components/molecules/QandA-short";
@@ -33,20 +34,49 @@ const QuizTemplate = ({ config, onNext, onPrevious, cacheImage }: QuizTemplatePr
   const { partId, title, totalSteps, id: partNumber, steps, bonusSteps, requiredFields, defaultImages } = config;
   const { updateField, getField } = useFormContext();
   const [birthday, setBirthday] = useState<Date | undefined>(undefined);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedBonusStep, setSelectedBonusStep] = useState<string | null>(null);
   
   // Image management
   const [imageUrls, setImageUrls] = useState<Record<string, string | null>>({});
+  // Add isClient state to track client-side rendering
+  const [isClient, setIsClient] = useState(false);
+
+  // Safe localStorage wrapper function
+  const getLocalStorageItem = (key: string) => {
+    if (typeof window === 'undefined') return null;
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.error(`Error accessing localStorage for key ${key}:`, e);
+      return null;
+    }
+  };
 
   // Load saved data on component mount
   useEffect(() => {
+    // Set isClient to true to indicate we're running on the client side
+    setIsClient(true);
+    
+    // Only run client-side code when window is defined
+    if (typeof window === 'undefined') return;
+
+    // Initialize birthday from stored value
+    const birthdayStr = getField(partId, "birthday");
+    if (birthdayStr) {
+      const parsed = new Date(birthdayStr); // Uses native parsing
+      if (!isNaN(parsed.getTime())) {
+        setBirthday(parsed); // Only for showing in DatePicker
+      }
+    }
+    
     // Initialize images from localStorage if they exist
     if (defaultImages) {
       const imageKeys = Object.keys(defaultImages);
       const savedImages: Record<string, string | null> = {};
       
       imageKeys.forEach(key => {
-        const savedImage = localStorage.getItem(`${partId}_image_${key}`);
+        const savedImage = getLocalStorageItem(`${partId}_image_${key}`);
         if (savedImage && savedImage.trim() !== "") {
           savedImages[key] = savedImage;
         }
@@ -76,18 +106,13 @@ const QuizTemplate = ({ config, onNext, onPrevious, cacheImage }: QuizTemplatePr
   };
   
   // Handle date picker changes
-  const handleBirthdayChange = (date: Date | undefined) => {
-    setBirthday(date);
+  const handleDateChange = (date: Date | null) => {
     if (date) {
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const year = date.getFullYear();
-      const formattedDate = `${month}-${day}-${year}`;
-      updateField(partId, "birthday", formattedDate);
-    } else {
-      updateField(partId, "birthday", "");
+      const formatted = format(date, 'MMMM d, yyyy');
+      setSelectedDate(formatted);
     }
   };
+  
 
   // Handle chip selection
   const handleChipSelect = (key: string, value: string) => {
@@ -96,24 +121,45 @@ const QuizTemplate = ({ config, onNext, onPrevious, cacheImage }: QuizTemplatePr
 
   // Handle image upload
   const handleImageChange = (key: string) => (file: File) => {
-    const imageUrl = URL.createObjectURL(file);
-    setImageUrls(prev => ({ ...prev, [key]: imageUrl }));
-    if (cacheImage) {
-      cacheImage(key, file);
-    }
+    // Make sure we're on the client side
+    if (typeof window === 'undefined') return;
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result as string;
+      try {
+        localStorage.setItem(`${partId}_image_${key}`, base64Data);
+        setImageUrls(prev => ({ ...prev, [key]: base64Data }));
+      } catch (e) {
+        console.error(`Error saving image to localStorage: ${e}`);
+        // If localStorage fails (e.g., quota exceeded), still update the state
+        // so the image shows during the current session
+        setImageUrls(prev => ({ ...prev, [key]: base64Data }));
+      }
+    };
+    reader.readAsDataURL(file); // Convert to base64
   };
-
+  
   // Get image source
   const getImageSource = (key: string): string => {
-    if (!defaultImages) return '';
+    if (!isClient || !defaultImages) return '';
     
     const cachedUrl = imageUrls[key];
     if (cachedUrl && cachedUrl.trim() !== "") return cachedUrl;
   
-    const savedImage = localStorage.getItem(`${partId}_image_${key}`);
+    const savedImage = getLocalStorageItem(`${partId}_image_${key}`);
     if (savedImage && savedImage.trim() !== "") return savedImage;
   
     return defaultImages[key] || '';
+  };
+
+  const handleBirthdayChange = (date: Date | null) => {
+    if (date) {
+      const formatted = format(date, "MMMM d, yyyy");
+      setBirthday(date);
+      setSelectedDate(formatted);
+      updateField(partId, "birthday", formatted);
+    }
   };
   
   // Handle bonus question selection
@@ -198,6 +244,7 @@ const QuizTemplate = ({ config, onNext, onPrevious, cacheImage }: QuizTemplatePr
             {...commonProps}
             pickedDate={birthday}
             onChange={handleBirthdayChange}
+            selected={birthday || null}
           />
         );
         
@@ -252,6 +299,15 @@ const QuizTemplate = ({ config, onNext, onPrevious, cacheImage }: QuizTemplatePr
         return null;
     }
   };
+
+  // Show a loading state when rendering on the server
+  if (!isClient) {
+    return (
+      <div className="max-w-screen-md mx-auto text-center py-8">
+        <p className="text-gray-500">Loading quiz...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-screen-md mx-auto space-y-6 pb-20">
