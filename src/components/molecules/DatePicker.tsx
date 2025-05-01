@@ -7,8 +7,7 @@ type DatePickerProps = {
   pickedDate?: Date;  
   onChange?: (date: Date | undefined) => void;
   className?: string;
-  label?: string;
-  isRequired?: boolean; 
+  labelText?: React.ReactNode;
 };
 
 type CalendarProps = {
@@ -233,8 +232,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   pickedDate,
   onChange,
   className,
-  label,
-  isRequired,
+  labelText,
 }) => {
   const [open, setOpen] = useState(false);
   const datePickerRef = React.useRef<HTMLDivElement>(null);
@@ -265,8 +263,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <div className={cn("w-full", className)}>
-      {label && (
-        <Label text={label} isRequired={isRequired} />
+      {labelText && (
+        <Label text={labelText}/>
       )}
       <div ref={datePickerRef} className="relative w-full">
         {/* Button trigger */}

@@ -2,13 +2,13 @@
 
 import React from "react";
 
-const Final = () => {
+const ResultTemplate = () => {
   
   return (
     <div className="max-w-screen-md mx-auto space-y-6">
-      final
+      hi
     </div>
   );
 };
 
-export default Final;
+export default ResultTemplate;

@@ -1,0 +1,91 @@
+import { QuizPartConfig } from '../types/quiz';
+
+export const Part4Config: QuizPartConfig = {
+  id: 4,
+  partName: "Part 04",
+  partId: "part4",
+  title: "Part 04. Whimsy",
+  totalSteps: 7,
+  requiredFields: [
+    // "superpower", 
+    "season", 
+    // "era", 
+    // "googled", 
+    // "million"
+  ],
+  steps: [
+    {
+      key: "superpower",
+      type: "CardTextInput",
+      bgColor: "bg-blue-seven",
+      question: "Dream superpower?", 
+      followUpQuestion: "",
+      isRequired: true,
+    },
+    {
+      key: "season",
+      type: "CardAndChips",
+      bgColor: "bg-red-seven",
+      question: "If you were a season, which one?", 
+      followUpQuestion: "",
+      options: [
+        { color: "bg-orange-five", label: "Spring" },
+        { color: "bg-yellow-five", label: "Summer" },
+        { color: "bg-white", label: "Autumn" },
+        { color: "bg-blue-five", label: "Winter" },
+      ],
+      isRequired: true,
+    },
+    {
+      key: "era",
+      type: "CardAndChips",
+      bgColor: "bg-yellow-seven",
+      question: "Live in any era?", 
+      followUpQuestion: "(hmm what would you do there)", 
+      options: [
+        { color: "bg-green-five", label: "Ancient Times" },
+        { color: "bg-yellow-five", label: "The 1800s" },
+        { color: "bg-red-five", label: "The Roaring '20s" },
+        { color: "bg-blue-five", label: "The '80s" },
+        { color: "bg-violet-five", label: "The Future" },
+      ],
+      isRequired: true,
+    },
+    {
+      key: "googled",
+      type: "CardTextInput",
+      bgColor: "bg-blue-seven",
+      question:  "What's the last thing you Googled?", 
+      followUpQuestion: "",
+      isRequired: true,
+    },
+    {
+        key: "million",
+        type: "CardAndChips",
+        bgColor: "bg-yellow-seven",
+        question: "First thing you'd do with a million?",
+        followUpQuestion: "",
+        options:[
+            {color:"bg-green-five",label:"Travel the world"},
+            {color:"bg-yellow-five",label:"Start a business"},
+            {color:"bg-red-five",label:"Help family and friends"},
+            {color:"bg-blue-five",label:"Invest and save"},
+          ],
+        isRequired: true,
+      },
+      {
+        key: "divider",
+        type: "Divider",
+        question: "",
+        isRequired: false,
+      },
+      {
+        key: "moneyNotIssue",
+        type: "QandAlong",
+        bgColor: "bg-green-seven",
+        question: "First thing you'd do with a million?",
+        followUpQuestion: "(Skip if you want)",
+        isRequired: false,
+      },
+  ],
+};

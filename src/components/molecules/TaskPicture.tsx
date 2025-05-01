@@ -6,7 +6,7 @@ interface TaskPictureProps {
   imageSrc: string;
   altText?: string;
   imageKey: string;
-  onImageChange?: (file: File) => void;  // Updated type to match parent component
+  onImageChange?: (file: File) => void;
 }
 
 const TaskPicture: React.FC<TaskPictureProps> = ({
@@ -18,7 +18,7 @@ const TaskPicture: React.FC<TaskPictureProps> = ({
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && onImageChange) {
-      onImageChange(file);  // Now just passing the file
+      onImageChange(file);
     }
   };
 

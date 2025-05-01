@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -14,7 +14,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "CheerCircle",
-  description: "Digital slam books where you and your friends answer quirky questions and create unique visual memories.",
+  description:
+    "Digital slam books where you and your friends answer quirky questions and create unique visual memories.",
+};
+
+// ✅ Proper place to define theme-color now
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFEC7E'},
+    { media: '(prefers-color-scheme: dark)', color: '#FFBE00' },
+  ],
 };
 
 export default function RootLayout({
@@ -25,7 +34,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="bg-yellow-five" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"

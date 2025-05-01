@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/atoms/Button";
 
@@ -8,11 +8,15 @@ export default function Home() {
   const router = useRouter();
   const [animate, setAnimate] = useState(false);
 
+  useEffect(() => {
+    router.prefetch('/login');
+  }, []);
+
   const handleClick = () => {
     setAnimate(true);
     setTimeout(() => {
       router.push("/login");
-    }, 200);
+    }, 180);
   };
 
   return (
@@ -32,7 +36,7 @@ export default function Home() {
 
       {/* Expanding circle */}
       <div
-        className={`fixed z-50 rounded-full transition-transform duration-700 ease-out 
+        className={`fixed z-50 rounded-full transition-transform duration-180 ease-out 
           ${animate ? "scale-[100]" : "scale-0"} 
           w-10 h-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none`}
         style={{

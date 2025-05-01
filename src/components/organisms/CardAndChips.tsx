@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
 import Card from "@/components/molecules/Card";
 import ChipGroup from "@/components/molecules/ChipGroup";
 

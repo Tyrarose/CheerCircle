@@ -1,7 +1,7 @@
 import React from "react";
 
 interface QandAProps {
-  labelText: string;
+  labelText: React.ReactNode;
   inputId: string;
   inputPlaceholder: string;
   value: string;

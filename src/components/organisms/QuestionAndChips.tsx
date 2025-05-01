@@ -3,6 +3,7 @@ import ChipGroup from "@/components/molecules/ChipGroup";
 
 interface QuestionAndChipsProps {
   labelText: React.ReactNode;
+
   chips: { label: string; color: string }[];
   onChipSelect: (value: string) => void;
   selectedChip: string | null;
@@ -10,6 +11,7 @@ interface QuestionAndChipsProps {
 
 const QuestionAndChips: FC<QuestionAndChipsProps> = ({
   labelText,
+  
   chips = [],
   onChipSelect,
   selectedChip,
