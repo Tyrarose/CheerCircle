@@ -21,7 +21,15 @@ export default {
   			baloo: [
   				'Baloo 2',
   				'sans-serif'
-  			]
+  			],
+			archivo: [
+				'Archivo Black',
+				'sans-serif'
+			],
+			agbalumo: [
+				'Agbalumo',
+				'sans-serif'
+			],
   		},
   		colors: {
   			red: {
@@ -34,7 +42,8 @@ export default {
   				five: '#FFBE00',
   				six: '#FFE028',
   				seven: '#FFEC7E',
-  				eight: '#F1EED5'
+  				eight: '#F1EED5',
+				nine: "#fff9ea"
   			},
   			green: {
   				five: '#4CAF50',
@@ -63,22 +72,26 @@ export default {
   			black: {
   				five: '#000000',
   				six: '#1A1F28',
-  				seven: '#333333'
+  				seven: '#333333',
+  				eight: '#71717A'
   			},
   			white: '#FFFFFF',
-  			pink: '#FF619B',
-  			brown: {
-  				five: '#8B4513',
-  				six: '#A5643B',
-  				seven: '#C88E69',
-  				eight: '#EAD1C2'
-  			},
-  			gray: {
-  				five: '#9E9E9E',
-  				six: '#B8BDC6',
-  				seven: '#DEDCD8',
-  				eight: '#F6F4F7'
-  			},
+			pink: {
+				five: '#FF619B',
+				six: '#ffabd6',
+			},
+			brown: {
+				five: '#8B4513',
+				six: '#A5643B',
+				seven: '#C88E69',
+				eight: '#EAD1C2',
+			},
+			gray: {
+				five: '#9E9E9E',
+				six: '#B8BDC6',
+				seven: '#DEDCD8',
+				eight: '#F6F4F7',
+			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

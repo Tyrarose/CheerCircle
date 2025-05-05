@@ -1,5 +1,5 @@
 import { FC } from "react";
-import ChipGroup from "@/components/molecules/ChipGroup";
+import ChipGroup from "@/components/molecules/quiz/ChipGroup";
 
 interface QuestionAndChipsProps {
   labelText: React.ReactNode;

@@ -1,18 +1,27 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-const ResultTemplate = () => {
-  const [story, setStory] = useState("");
-  const [images, setImages] = useState<{
-    funnyFace?: string;
-  }>({});
-  const [imageErrors, setImageErrors] = useState({
-    funnyFace: false,
-  });
-  const [isClient, setIsClient] = useState(false);
+import CapsuleLabel from "../molecules/result/CapsuleLabel";
+import CapsuleLabelLong from "../molecules/result/CapsuleLabelLong";
+import NickName from "../molecules/result/NickName";
+import NeverForget from "../molecules/result/NeverForget";
+import IconAndText from "../molecules/result/IconAndText";
+import StackedCards from "../molecules/result/StackedCards";
+import AppWindow from "../molecules/result/AppWindow";
+import NameBanner from "../molecules/result/NameBanner";
+import TwoColumnBordered from "../molecules/result/TwoColumnBordered";
+import BottomRow from "../molecules/result/BottomRow";
+import PictureWindow from "../molecules/result/PictureWindow";
+import Label from "../atoms/Label";
 
-  // Safe localStorage wrapper function
-  const getLocalStorageItem = (key: string) => {
+const ResultTemplate = () => {
+  const [userData, setUserData] = useState<Record<string, any>>({});
+  const [funnyFaceImage, setFunnyFaceImage] = useState(undefined);
+  const [funnyFaceError, setFunnyFaceError] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getLocalStorageItem = (key: string): string | null => {
     if (typeof window === 'undefined') return null;
     try {
       return localStorage.getItem(key);
@@ -39,61 +48,50 @@ const ResultTemplate = () => {
     }
     return mergedAnswers;
   };
-
-  const getIntro = (fullname: string | undefined, nickname: string | undefined, birthday: string | undefined) => {
-    const options = [
-      `Meet ${fullname || "our mysterious friend"}${nickname ? ` (aka ${nickname})` : ""}, born on ${birthday}.`,
-      `${fullname ? fullname : "Someone"} just stepped into the spotlight.${nickname ? ` Nickname? ${nickname}.` : ""}`,
-      `Once upon a time, on ${birthday}, ${fullname || "a curious soul"} was born.`,
-      `This story begins with ${fullname || "a mystery"}${nickname ? `, known to some as ${nickname}` : ""}.`,
-      `${fullname ? `${fullname} — a name to remember.` : "A story with an unknown name, yet so vivid."}`,
-    ];
-    return options[Math.floor(Math.random() * options.length)];
-  };
   
-  const getFavoriteColorInsight = (color: string = ""): string => {
-    const insights: Record<string, string> = {
-      red: "A bold choice — passionate, driven, and never afraid to stand out.",
-      blue: "They value calm, trust, and loyalty. A peaceful presence in a chaotic world.",
-      green: "Grounded and in tune with nature, they're a breath of fresh air.",
-      yellow: "Bright and optimistic, they tend to light up any room.",
-      purple: "Creative and mysterious, with a touch of royalty.",
-      pink: "A heart full of softness and a spark of playful rebellion.",
-      black: "Elegant and powerful — they find comfort in mystery and depth.",
-      white: "Simple, serene, and full of clarity. There's beauty in their quiet strength.",
-      orange: "Energetic, adventurous, and always chasing the next thrill.",
-      brown: "Reliable, stable, and deeply rooted. A quiet strength surrounds them.",
-      gray: "Balanced and wise, they walk the fine line between logic and emotion.",
-      gold: "They seek richness in life — not just in things, but in meaning.",
-      silver: "Reflective, sharp, and graceful under pressure.",
+  const getFavoriteColorInsight = (color = "") => {
+    const insights: { [key: string]: string } = {
+      red: "Bold choice: passionate, driven, loves to stand out.",
+      blue: "Values calm, trust, loyalty. A peaceful, steady soul.",
+      green: "Grounded, like nature. A breath of fresh air.",
+      yellow: "Bright, optimistic, lights up every single room.",
+      violet: "Creative, mysterious, with a regal, artistic touch.",
+      pink: "Soft heart, playful spirit. Sweet with a little edge.",
+      black: "Elegant power. Mystery and depth draw them in.",
+      white: "Simple, serene clarity. Quiet strength shines through.",
+      orange: "Energetic, adventurous, always chasing the next thrill.",
+      brown: "Reliable, stable roots. A quiet, dependable strength.",
+      gray: "Balanced, wise. Logic and emotion walk hand-in-hand.",
+      gold: "Seeks richness in life, beyond just things.",
+      silver: "Reflective, sharp mind, graceful under pressure.",
     };
   
-    const key = color?.toLowerCase().trim() || "";
-    return insights[key] || "An intriguing color — a choice that hints at a layered soul.";
+    const key = color?.trim() || "";
+    return insights[key] || "Intriguing color choice. Hints at a layered soul.";
   };
 
-  const getSeasonInsight = (season: string = "") => {
+  const getSeasonInsight = (season = "") => {
     if (!season) return "A season unlike any other — just like them.";
     
-    switch (season.toLowerCase()) {
+    switch (season) {
       case "summer":
-        return "They bring warmth and a burst of energy wherever they go.";
+        return "They bring warmth and a burst of energy wherever they go";
       case "winter":
-        return "Cool, introspective, and quietly powerful.";
+        return "Cool, introspective, and quietly powerful";
       case "spring":
-        return "Always blooming with new ideas and vibrant hope.";
+        return "Always blooming with new ideas and vibrant hope";
       case "autumn":
       case "fall":
-        return "Their presence is comforting, like a warm cup of tea in crisp air.";
+        return "Their presence is comforting, like a warm cup of tea in crisp air";
       default:
-        return "A season unlike any other — just like them.";
+        return "A season unlike any other — just like them";
     }
   };
 
-  const getDogOrCatInsight = (choice: string = "") => {
+  const getDogOrCatInsight = (choice = "") => {
     if (!choice) return "They exist in a category all their own.";
     
-    switch (choice.toLowerCase()) {
+    switch (choice) {
       case "dog":
         return "Loyal, playful, and always up for a new adventure.";
       case "cat":
@@ -102,44 +100,40 @@ const ResultTemplate = () => {
         return "They exist in a category all their own.";
     }
   };
+
+  const getCleaningInsight = (choice = "") => {
+    if (!choice) return "Balances order and ease in their own way.";
   
-  const getMillionInsight = (million: string = "") => {
+    switch (choice) {
+      case "clean now, rest later":
+        return "Values accomplishment before peace. Action-oriented, enjoys a tidy reward.";
+      case "rest now, clean later":
+        return "Prioritizes well-being. Believes in recharging before tackling tasks.";
+      default:
+        return "Balances order and ease in their own way.";
+    }
+  };
+  
+  const getMillionInsight = (million = "") => {
     if (!million) return "";
     
-    if (million.toLowerCase().includes("help")) {
+    if (million.includes("help")) {
       return "A heart that thinks beyond the self — they'd uplift others first.";
-    } else if (million.toLowerCase().includes("travel")) {
+    } else if (million.includes("travel")) {
       return "Curious and bold, they'd turn fortune into unforgettable memories.";
-    } else if (million.toLowerCase().includes("invest")) {
+    } else if (million.includes("invest")) {
       return "Strategic and forward-thinking — they plant seeds for tomorrow.";
+    } else if (million.includes("business")) {
+      return "Driven and independent — they're wired to build their own path, a true creator.";
     } else {
       return "Their instincts say it all — no hesitation, just bold moves.";
     }
   };
   
-  const getFaveWeatherInsight = (weather: string = "") => {  
-    if (!weather) return "Whatever the sky holds, they find their own kind of magic in it.";
-    
-    switch (weather.toLowerCase()) {
-      case "sunny":
-        return "A true sun-chaser — they light up the room and thrive under warmth and clarity.";
-      case "rainy":
-        return "There's comfort in the sound of raindrops — introspective, poetic, and gentle.";
-      case "cloudy":
-        return "They find beauty in the gray — calm, dreamy, and always thinking deeply.";
-      case "snowy":
-        return "Soft yet bold — they carry a quiet strength, just like fresh snowfall.";
-      case "breezy":
-        return "Easygoing and free-spirited — like a breeze, they bring calm wherever they go.";
-      default:
-        return "Whatever the sky holds, they find their own kind of magic in it.";
-    }
-  };
-  
-  const getWordToDescribeInsight = (word: string = "") => {
+  const getWordToDescribeInsight = (word = "") => {
     if (!word) return "They're uniquely themselves — too special to be summed up in one word.";
     
-    switch (word.toLowerCase()) {
+    switch (word) {
       case "calm":
         return "Steady and soothing, they bring peace into every room they enter.";
       case "adventurous":
@@ -163,10 +157,10 @@ const ResultTemplate = () => {
     }
   };
   
-  const getEraInsight = (era: string = "") => {
+  const getEraInsight = (era = "") => {
     if (!era) return "A traveler through time — they carry traits from many eras, making them endlessly unique.";
     
-    switch (era.toLowerCase()) {
+    switch (era) {
       case "ancient times":
         return "A timeless soul — wise beyond years, deeply rooted in history, and drawn to the mysteries of the past.";
       case "the 1800s":
@@ -181,136 +175,172 @@ const ResultTemplate = () => {
         return "A traveler through time — they carry traits from many eras, making them endlessly unique.";
     }
   };
+
+  const getRiseOrSetInsight = (choice = "") => {
+    if (!choice) return "They find meaning in both beginnings and endings.";
+    
+    switch (choice) {
+      case "sunrise":
+        return "They embrace new beginnings and fresh opportunities.";
+      case "sunset":
+        return "They appreciate beauty in closing chapters and peaceful reflection.";
+      default:
+        return "They find meaning in both beginnings and endings.";
+    }
+  };
+
+  const getHobbyInsight = (hobby = "") => {
+    if (!hobby) return "Whatever captures their interest becomes a canvas for their passion.";
+    
+    if (hobby.includes("read")) {
+      return "Their mind is a library of stories, ideas, and endless curiosity.";
+    } else if (hobby.includes("music") || hobby.includes("sing") || hobby.includes("play")) {
+      return "They find rhythm in life and harmony in challenges.";
+    } else if (hobby.includes("art") || hobby.includes("paint") || hobby.includes("draw")) {
+      return "They see the world in colors others might miss.";
+    } else if (hobby.includes("sport") || hobby.includes("run") || hobby.includes("bike")) {
+      return "Determination and energy fuel both their passions and pursuits.";
+    } else if (hobby.includes("cook") || hobby.includes("bake")) {
+      return "They know life, like good food, is about bringing the right elements together.";
+    } else {
+      return "Their interests reveal a soul that's always exploring.";
+    }
+  };
+
+  const getIcon = (item = "") => {
+    switch (item || "") {
+      // Icon for Season
+      case "spring":
+        return "fa fa-leaf";
+      case "summer":
+        return "fa fa-sun";
+      case "autumn":
+        return "fa fa-tint";
+      case "winter":
+        return "fa fa-snowflake";
+
+      default:
+        return "fa fa-phone";
+    }
+  };
+
+  const getLoveLanguageInsight = (loveLanguage = "") => {
+    switch (loveLanguage.toLowerCase()) {
+      case "acts of service":
+        return "Oh! Helping hands make their heart happy. Doing things for them is like a super sweet hug!";
+      case "receiving gifts":
+        return "Ooh, shiny! Little presents and thoughtful surprises make them feel extra special and loved.";
+      case "quality time":
+        return "Hey! Just being together, doing fun stuff, makes their heart glow. It's all about special moments!";
+      case "words of affirmation":
+        return "Shhh... Kind words are like sunshine to them. Hearing nice things makes them feel so good inside.";
+      case "physical touch":
+        return "A gentle squeeze or a high-five? That's their language! Feeling close makes them feel super loved.";
+      default:
+        return "Hmm, figuring out what makes their heart happy is like a fun little adventure!";
+    }
+  };
+
+  const getDigDeeper = (
+    skill = "", 
+    wantToTry = "",
+    bucketList  = "",
+    buyDreamHome  = "", 
+    exploreGoal   = "",
+  ) => {
+    let story = "Imagine a world where anything is possible...\n";
+
+    if (skill) {
+      story += `In this realm, they suddenly possessed the mastery of ${skill}. What wonders would they create with this newfound talent?`;
+    } else {
+      story += "A spark of potential flickered within, ready to ignite any hidden ability.";
+    }
   
-  const storyTemplate = (data: Record<string, any>) => {
-    const {
-      fullname,
-      nickname,
-      usernameStory,
-      birthday,
-      favoriteColor,
-      wordToDescribe,
-      lazyDayActivity,
-      faveWeather,
-      currentObsession,
-      childhoodMemory,
-      mostComforting,
-      animals,
-      emoji,
-      neverForget,
-      dessert,
-      adventure,
-      song,
-      superpower,
-      season,
-      era,
-      googled,
-      million,
-      moneyNotIssue,
-      clothing,
-      clothingInsight,
-      door,
-      doorInsight,
-      talkToAnimal,
-      swapLife,
-      riseOrSet,
-      riseOrSetInsight,
-      riseOrSetWhy,
-      dogOrCat,
-      dogOrCatWhy,
-      flavors,
-      flavorsInsight,
-      hobby,
-      hobbyInsight,
-      funFact,
-    } = data;
+    if (wantToTry) {
+      story += `There was always that one thing, ${wantToTry}, they longed to experience but hadn't yet. Perhaps now, the reasons holding them back would simply fade away.`;
+    } else {
+      story += "A sense of unexplored possibilities lingered, waiting for the right moment to be embraced.";
+    }
+  
+    if (bucketList) {
+      story += `A cherished dream, ${bucketList}, felt closer than ever.`;
+      if (bucketList) {
+        story += ` The thought of finally reaching ${bucketList} filled them with excitement.`;
+      } else {
+        story += " The anticipation of finally making it happen was thrilling.";
+      }
+    } else {
+      story += "A whisper of adventure beckoned, hinting at journeys yet to be taken.";
+    }
+  
+    if (buyDreamHome) {
+      story += `The first treasure for their dream home would be ${buyDreamHome}. It would be more than just an object; it would be a symbol of comfort and belonging.`;
+    } else {
+      story += "The foundations of a perfect sanctuary awaited their personal touch.";
+    }
     
-    return `
-    ${getIntro(fullname, nickname, birthday)}
-    ${usernameStory ? `\n${usernameStory}` : ""}
-    
-    Their favorite color? ${favoriteColor || "A mystery for now"}. ${getFavoriteColorInsight(favoriteColor)}
-    When asked to describe themselves in one word, they chose: ${wordToDescribe || "Indescribable"}. ${getWordToDescribeInsight(wordToDescribe)}
-    On a lazy day, you'll likely find them "${lazyDayActivity || "doing what brings them joy"} ... ".
-    They adore ${faveWeather || "their own special"} weather — ${getFaveWeatherInsight(faveWeather)}
-    
-    Lately, they've been obsessed with: ${currentObsession || "something special"}. Childhood nostalgia hits with memories like: ${childhoodMemory || "those they keep close to heart"}.
-    ${mostComforting ? `A gesture that stayed with them? "${mostComforting}".` : ""}
-    ${funFact ? `A fun fact about them: "${funFact}"` : ""}
-    
-    In a more whimsical mood, they imagine us as — "${animals || "unique creatures"}". To describe me? They simply say "${emoji || "✨"}".
-    Unforgettable? ${neverForget || "Some things remain a beautiful mystery"}.
-    
-    ${dessert ? `If I were dessert, I'd be: "${dessert}". Sweet or spicy — that's up to interpretation.` : ""}
-    ${adventure ? `Our dream adventure? ${adventure}` : ""}
-    ${song ? `A song that brings us to mind? "${song}".` : ""}
-    
-    In a world of magic, their dream superpower would be: ${superpower || "something extraordinary"}. As a season, they feel like ${season || "a blend of all seasons"}. ${getSeasonInsight(season)}
-    If they could live in any era, it would be ${era || "one of their choosing"}. ${getEraInsight(era)}
-    
-    Their last Google search? "${googled || "Something intriguing"}". 
-    ${million ? `First move with a million dollars? ${million}. ${getMillionInsight(million)}` : ""}
-    ${moneyNotIssue ? `If money wasn't an issue, they'd: "${moneyNotIssue}"` : ""}
-    
-    As clothing, they'd be: ${clothing || "something that fits just right"}. ${clothingInsight || ""}
-    As a door? "${door || "One that opens to possibilities"}". ${doorInsight || ""}
-    
-    ${talkToAnimal ? `If they could talk to any animal, it would be: ${talkToAnimal}.` : ""}
-    ${swapLife ? `They'd trade lives for a day with: ${swapLife}` : ""}
-    
-    ${riseOrSet ? `They chose ${riseOrSet} — ${riseOrSetInsight || ""}` : ""}
-    ${riseOrSetWhy ? `"${riseOrSetWhy}"` : ""}
-    
-    ${dogOrCat ? `Team ${dogOrCat}. ${getDogOrCatInsight(dogOrCat)}.` : ""}
-    ${dogOrCatWhy ? `"${dogOrCatWhy}"` : ""}
-    
-    ${flavors ? `Their taste? Definitely ${flavors}. ${flavorsInsight || ""}` : ""}
-    ${hobby ? `Their hobby heart belongs to: ${hobby}. ${hobbyInsight || ""}` : ""}
-    `;
+    if (exploreGoal) {
+      story += `A quiet curiosity tugged at them – the desire to explore the small goal of ${exploreGoal}. It was a chance for personal growth and enjoyment.`;
+    } else {
+      story += "A gentle nudge towards self-discovery suggested new hobbies and interests waiting to be found.";
+    }
+  
+    story += "In this 'what if' scenario, the possibilities stretched as far as the imagination could reach. What a wonderful world it could be!";
+  
+    return story;
   };
 
-  // Function to safely handle image loading and display
-  const handleImageError = (type: string) => {
-    setImageErrors(prev => ({
-      ...prev,
-      [type]: true
-    }));
-    console.error(`Failed to load image: ${type}`);
-  };
-
-  useEffect(() => {
-    // Mark that we're running on the client side
-    setIsClient(true);
-    
-    // This runs only client-side
-    const loadClientData = () => {
-      try {
-        // Get story data
-        const answers = getCacheData();
-        
-        // Get image data from localStorage - could be base64 strings or URLs
-        const imageData = {
-          funnyFace: getLocalStorageItem("funnyFace") || undefined,
-        };
-        
-        setImages(imageData);
-        
-        const storyText = storyTemplate(answers);
-        setStory(storyText.trim());
+  
+useEffect(() => {
+  setIsClient(true);
+  
+  const loadClientData = () => {
+    try {
+      const cachedData = getCacheData();
+      
+      // No data case - exit early
+      if (cachedData === null || cachedData === undefined) {
+        return;
+      }
+      
+      // Format data according to its type before updating state
+      const formattedData = formatDataForState(cachedData);
+      setUserData(formattedData);
       } catch (error) {
         console.error("Error loading client data:", error);
-        setStory("There was an error loading your story. Please try refreshing the page.");
       }
     };
-
-    // Only run on the client
+  
+    // Only run on the client side
     if (typeof window !== 'undefined') {
       loadClientData();
     }
-  }, []);
+  }, [getCacheData, setUserData, setIsClient]);
 
-  // Show a loading state when rendering on the server or before client-side code runs
-  if (!isClient) {
+  //  Formats various data types into the object format required by setUserData
+  function formatDataForState(data: any): Record<string, any> {
+    // Case 1: If it's already an object, lowercase string values
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      const result: Record<string, any> = {};
+      
+      Object.entries(data).forEach(([key, value]) => {
+        result[key] = typeof value === 'string' 
+          ? value.toLowerCase() 
+          : value;
+      });
+      return result;
+    }
+    
+    // Case 2: If it's a string, wrap in an object
+    if (typeof data === 'string') {
+      return { value: data.toLowerCase() };
+    }
+    
+    // Case 3: For any other type, wrap in an object
+    return { value: data };
+  }
+
+  if (!isClient && isLoading) {
     return (
       <div className="max-w-screen-md mx-auto text-center py-8">
         <p className="text-gray-500">Loading your story...</p>
@@ -318,73 +348,224 @@ const ResultTemplate = () => {
     );
   }
 
-  // Function to render a placeholder image
-  const renderPlaceholder = () => (
-    <div className="bg-gray-200 rounded-lg flex items-center justify-center h-64">
-      <p className="text-gray-500">Image not available</p>
-    </div>
-  );
-
-  // Function to render an image with error handling
-  const renderImage = (src: string | undefined, alt: string, type: string) => {
-    if (!src || imageErrors[type as keyof typeof imageErrors]) {
-      return renderPlaceholder();
-    }
-
-    return (
-      <img
-        src={src}
-        alt={alt}
-        className="rounded-lg shadow-md mx-auto max-h-64 object-cover"
-        onError={() => handleImageError(type)}
-      />
-    );
-  };
 
   return (
-    <div className="max-w-screen-md mx-auto space-y-8 whitespace-pre-wrap font-serif text-lg leading-relaxed px-4">
-      {/* Display the story text */}
-      {story ? (
-        <main className="story-content"> {story}
+    <div className="mx-auto space-y-8 whitespace-pre-wrap font-serif text-lg leading-relaxed px-4 mb-6">
+      <main className="m-20 py-8"> 
+        <div className="flex flex-col md:grid md:grid-cols-1 lg:grid-cols-2 lg:gap-8">
+          {/* FIRST PAGE */}
+          <section className="flex flex-col flex-1 md:h-auto md:w-auto mb-8 lg:mb-0 bg-yellow-nine">
+            <NameBanner name={userData.fullname || "tyra banks"}/>
+            <TwoColumnBordered
+              leftContent={userData.favoriteColor || "red"}
+              rightContent={getFavoriteColorInsight(userData.favoriteColor)}
+            />
+            <div className="flex flex-row flex-grow gap-4">
+              {/* LEFT COLUMN */}
+              <section className="flex-1">
+                <CapsuleLabel
+                  color="bg-blue-six" 
+                  upper="When asked to describe themselves in one word, they chose:"
+                  word={userData.wordToDescribe || "Unique"}
+                  lower={getWordToDescribeInsight(userData.wordToDescribe)}
+                />
+                <CapsuleLabel
+                  color="bg-red-six"
+                  upper="On a lazy day, you'll likely find them"
+                  word={userData.lazyDayActivity || "Relaxing"}
+                />
+                <CapsuleLabel
+                  color="bg-green-six"
+                  upper="Lately, they've been obsessed with:"
+                  word={userData.currentObsession || "doomscrolling"}
+                />
+                <NickName 
+                  name={userData.nickname || "Ramen Noodles"} 
+                  story={userData.usernameStory || "I have curly hair"}
+                />
+                <CapsuleLabel
+                  color="bg-violet-six"
+                  upper="Childhood nostalgia hits with:"
+                  word={userData.childhoodMemory || "Super Mario"}
+                />
+                <CapsuleLabel
+                  color="bg-yellow-six"
+                  upper="In terms of cleaning, they prefer:"
+                  word={userData.cleaning || "Cleaning asap"}
+                  lower={getCleaningInsight(userData.cleaning)}
+                />
+                <CapsuleLabelLong
+                  color="bg-blue-six"
+                  upper="An advice to their younger self"
+                  word={`"${userData.advice} ... "` || "This too shall pass"}
+                />
+              </section>
 
-          <section>
-            <div className="bg-yellow-five w-full">
-              Francois Mercer
+              {/* RIGHT COLUMN */}
+              <section className="flex-1">
+                <PictureWindow
+                  picture=""
+                  color={`bg-${userData.favoriteColor}-five`}
+                  fact={userData.funFact || "Bananas are berries, but strawberries aren't!"}
+                />
+                <CapsuleLabel
+                  color="bg-blue-six"
+                  upper="Their love language is"
+                  word={userData.loveLanguage || "words of affirmation"}
+                  lower={getLoveLanguageInsight(userData.loveLanguage)}
+                />
+                <CapsuleLabel
+                  color="bg-red-six"
+                  upper="In a world of magic, their dream superpower would be: "
+                  word={userData.superpower || "Color changing Steps"}
+                />
+                <CapsuleLabel
+                  color="bg-blue-six"
+                  upper="First move with a million dollars?"
+                  word={userData.million || "Create a Museum of Socks"}
+                  lower={getMillionInsight(userData.million)}
+                />
+                <CapsuleLabel
+                  color="bg-red-six"
+                  word={userData.riseOrSet || "Sunrise and Sunset"}
+                  lower={userData.riseOrSetWhy || getRiseOrSetInsight(userData.riseOrSet)}
+                />
+              </section>
             </div>
-            <div className="w-full bg-black-five"></div>
-            <ul>
-              <li>Motion Designer</li>
-              <li>Motion Designer</li>
-              <li>Motion Designer</li>
-            </ul>
+            <BottomRow
+              col1={{ 
+                text: userData.birthday || "Birthday", 
+                icon: "fa fa-birthday-cake",
+                color: "bg-blue-five" 
+              }}
+              col2={{ 
+                text: userData.birthday || "Birthday", 
+                icon: "fa fa-birthday-cake",
+                color: "bg-violet-five" 
+              }}
+              col3={{ 
+                text: userData.season || "Season", 
+                icon: getIcon(userData.season), 
+                color: "bg-green-five" 
+              }}
+              col4={{ 
+                text: userData.superpower || "Superpower", 
+                icon: "fa fa-bolt", 
+                color: "bg-red-five" 
+              }}
+            />
           </section>
 
-          <section>
-            {/* body */}
-          </section>
-
-          <section>
-            {/* footer */}
-          </section>
-        </main>
-      ) : (
-        <section className="text-center py-8">
-          <p className="text-gray-500">Loading your story...</p>
-        </section>
-      )}
-      
-      {/* Display images if they exist */}
-      {(images.funnyFace) && (
-        <div className="image-gallery mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {images.funnyFace && (
-            <div className="image-container">
-              <h3 className="text-center font-medium mb-2">Making a Funny Face</h3>
-              {renderImage(images.funnyFace, "Making a funny face", "funnyFace")}
+          {/* SECOND PAGE */}
+          <section className="flex flex-col flex-1 md:h-auto md:w-auto mb-8 lg:mb-0 bg-yellow-nine">
+            <NameBanner name={userData.fullname || "Your Name"}/>
+            <TwoColumnBordered
+              leftContent={userData.season || "Season"}
+              rightContent={getSeasonInsight(userData.season)}
+            />
+            <div className="flex flex-row flex-grow gap-4">
+              {/* LEFT COLUMN */}
+              <section className="flex-1">
+                <NeverForget
+                  color="bg-pink-six"
+                  label={userData.neverForget || "Screaming the name of my crush"}
+                />
+                <CapsuleLabel
+                  color="bg-yellow-six"
+                  upper="Their taste? Definitely"
+                  word={userData.flavors || "Sweet"}
+                />
+                <CapsuleLabelLong
+                  color="bg-blue-six"
+                  upper="Last thing they googled?"
+                  word={`"${userData.googled} ... "` || "Tung tung tung sahur"}
+                />
+                <div className="flex flex-col m-3 gap-3">
+                  <IconAndText 
+                    icon="fa fa-tshirt" 
+                    color="bg-red-six" 
+                    leftAlign 
+                    label={`As clothing, they'd be: ${userData.clothing || "Something that fits just right"}`}
+                  />
+                  <IconAndText 
+                    icon="fa fa-door-open" 
+                    color="bg-red-six" 
+                    leftAlign 
+                    label={`As a door? "${userData.door || "One that opens to possibilities"}"`}
+                  />
+                  <IconAndText 
+                    icon="fa fa-exchange-alt" 
+                    color="bg-red-six" 
+                    leftAlign 
+                    label={`They'd trade lives for a day with: ${userData.swapLife || "Someone fascinating"}`}
+                  />
+                </div>
+                <AppWindow 
+                  color="bg-green-five" 
+                  text={`To feel seen is ${userData.seenOrUnderstood} — and the most comforting moment was ${userData.mostComforting}` || "A gesture that stayed with them..."}
+                />
+                <StackedCards 
+                  title="About Us"
+                  color="bg-red-six" 
+                  text={"Pick from 3 options of questions swipes"} 
+                />
+              </section> 
+              {/* RIGHT COLUMN */}
+              <section className="flex-1">
+                <CapsuleLabel
+                  color="bg-violet-six"
+                  upper="Their hobby heart belongs to:"
+                  word={userData.hobby || "Hobby"}
+                  lower={getHobbyInsight(userData.hobby)}
+                />
+                <CapsuleLabel
+                  color="bg-green-six"
+                  upper="Cat or Dog?"
+                  word={userData.dogOrCat || "Both!"}
+                  lower={getDogOrCatInsight(userData.dogOrCat)}
+                />
+                <CapsuleLabelLong
+                  color="bg-blue-six"
+                  upper="If money wasn't an issue, they'd:"
+                  word={`"${userData.moneyNotIssue} ... "` || "Dreams without limits"}
+                />
+                <StackedCards 
+                  title="Dig Deeper"
+                  color="bg-violet-seven" 
+                  text={getDigDeeper(
+                    userData.skill, 
+                    userData.wantToTry, 
+                    userData.bucketList, 
+                    userData.buyDreamHome, 
+                    userData.exploreGoal)} 
+                />
+              </section>
             </div>
-          )}
-
+            <BottomRow
+              col1={{ 
+                text: userData.loveLanguage || "Love Language",
+                icon: "fa fa-heart", 
+                color: "bg-blue-five" 
+              }}
+              col2={{ 
+                text: userData.era || "Era", 
+                icon: "fa fa-history", 
+                color: "bg-violet-five" 
+              }}
+              col3={{ 
+                text: userData.flavors || "Taste", 
+                icon: "fa fa-utensils", 
+                color: "bg-green-five" 
+              }}
+              col4={{ 
+                text: userData.hobby || "Hobby", 
+                icon: "fa fa-heart", 
+                color: "bg-red-five" 
+              }}
+            />
+          </section>
         </div>
-      )}
+      </main>
     </div>
   );
 };

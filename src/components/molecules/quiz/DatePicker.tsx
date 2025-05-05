@@ -220,8 +220,8 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const renderYears = () => {
-    const startYear = currentYear - 35;
-    const years = Array.from({ length: 50 }, (_, i) => startYear + i);
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 40 }, (_, i) => currentYear - i);
 
     return (
       <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">

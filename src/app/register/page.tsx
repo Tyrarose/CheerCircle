@@ -6,7 +6,7 @@ import RegisterForm from "../../components/forms/RegisterForm";
 
 const RegisterPage = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-yellow-eight">
       <main className="flex-grow grid place-items-center relative overflow-hidden">
         <motion.div
           initial={{ y: "100%", opacity: 0 }}

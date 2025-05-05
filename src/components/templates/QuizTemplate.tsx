@@ -4,12 +4,12 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns"; 
 
-import ProgressBar from "@/components/molecules/ProgressBar";
-import QandAshort from "@/components/molecules/QandA-short";
-import TaskPicture from "@/components/molecules/TaskPicture";
-import QandAlong from "@/components/molecules/QandA-long";
-import DatePicker from "@/components/molecules/DatePicker";
-import ExpandableQA from "@/components/molecules/ExpandableQA";
+import ProgressBar from "@/components/molecules/quiz/ProgressBar";
+import QandAshort from "@/components/molecules/quiz/QandA-short";
+import TaskPicture from "@/components/molecules/quiz/TaskPicture";
+import QandAlong from "@/components/molecules/quiz/QandA-long";
+import DatePicker from "@/components/molecules/quiz/DatePicker";
+import ExpandableQA from "@/components/molecules/quiz/ExpandableQA";
 
 import CardTextInput from "@/components/organisms/CardTextInput";
 import CardAndChips from "@/components/organisms/CardAndChips";

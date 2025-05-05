@@ -20,7 +20,7 @@ export const Part7Config: QuizPartConfig = {
     {
         key: "wantToTry",
         type: "CardTextInput",
-        bgColor: "bg-green-seven",
+        bgColor: "bg-blue-seven",
         question: "Always wanted to try but haven't—why?",
         followUpQuestion: "",
         isRequired: false,
@@ -28,7 +28,7 @@ export const Part7Config: QuizPartConfig = {
     {
         key: "bucketList",
         type: "CardAndChips",
-        bgColor: "bg-blue-seven",
+        bgColor: "bg-green-seven",
         question: "What's a bucket list item you're excited to check off soon—and does it involve a dream destination?",
         followUpQuestion: "To where?",
         options: [
@@ -48,17 +48,9 @@ export const Part7Config: QuizPartConfig = {
         isRequired: false,
     },
     {
-        key: "ChildhoodActivity",
-        type: "CardTextInput",
-        bgColor: "bg-red-seven",
-        question: "Childhood activity you stopped but wanna try again?",
-        followUpQuestion: "",
-        isRequired: false,
-    },
-    {
         key: "exploreGoal",
         type: "CardTextInput",
-        bgColor: "bg-green-seven",
+        bgColor: "bg-red-seven",
         question: "Small goal/hobby you'd love to explore?",
         followUpQuestion: "",
         isRequired: false,

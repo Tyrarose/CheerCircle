@@ -8,11 +8,25 @@ export const Part6Config: QuizPartConfig = {
   totalSteps: 6,
   requiredFields: [
     "riseOrSet",
-    // "dogOrCat",
-    // "flavors",
-    // "hobby",
+    "dogOrCat",
+    "flavors",
+    "hobby",
   ],
   steps: [
+    {
+        key: "hobby",
+        type: "CardAndChips",
+        bgColor: "bg-yellow-seven",
+        question: "Hobby...?",
+        followUpQuestion: "",
+        options: [
+            { color: "bg-pink-five", label: "Books" },
+      { color: "bg-yellow-five", label: "Movies" },
+      { color: "bg-black-five", label: "Music" },
+      { color: "bg-violet-five", label: "Instruments" },
+        ],
+        isRequired: true,
+    },
     {
       key: "riseOrSet",
       type: "CardAndChips",
@@ -28,7 +42,7 @@ export const Part6Config: QuizPartConfig = {
     {
       key: "riseOrSetWhy",
       type: "ExpandableQA",
-      question: "Mind explaining why did you choose your previous answer?",
+      question: "Mind sharing why did you chose that?",
       isRequired: true,
     },
     {
@@ -47,7 +61,7 @@ export const Part6Config: QuizPartConfig = {
     {
         key: "dogOrCatWhy",
         type: "ExpandableQA",
-        question: "Mind explaining why did you choose your previous answer?",
+        question: "Mind sharing why did you chose that?",
         isRequired: true,
     },
     {
@@ -65,18 +79,16 @@ export const Part6Config: QuizPartConfig = {
         isRequired: true,
     },
     {
-        key: "hobby",
-        type: "CardAndChips",
-        bgColor: "bg-yellow-seven",
-        question: "Would you choose...?",
-        followUpQuestion: "",
-        options: [
-            { color: "bg-pink", label: "Books" },
-			{ color: "bg-yellow-five", label: "Movies" },
-			{ color: "bg-black-five", label: "Music" },
-			{ color: "bg-violet-five", label: "Instruments" },
-        ],
-        isRequired: true,
-    },
+      key: "cleaning",
+      type: "CardAndChips",
+      bgColor: "bg-yellow-seven",
+      question: "Would you choose...?",
+      followUpQuestion: "",
+      options: [
+          { color: "bg-green-five", label: "Clean now, Rest Later" },
+          { color: "bg-yellow-five", label: "Rest Now, Clean Later" },
+      ],
+      isRequired: true,
+  },
   ],
 };

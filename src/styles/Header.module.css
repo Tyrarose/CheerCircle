@@ -23,3 +23,7 @@
     color: #333333;
     margin: 0;
 }
+
+* {
+    border: 1px red dotted;
+}

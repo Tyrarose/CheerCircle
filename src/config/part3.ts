@@ -7,32 +7,31 @@ export const Part3Config: QuizPartConfig = {
   title: "Part 03. Vibes",
   totalSteps: 7,
   requiredFields: [
-    "animals", 
-    // "emoji", 
-    // "neverForget"
+    "emoji", 
+    "neverForget"
   ],
   steps: [
     {
-      key: "animals",
-      type: "CardTextInput",
-      bgColor: "bg-blue-seven",
-      question: "If we were animals, what would we be?",
-      followUpQuestion: "Who would be the predator? We're both prey? We're both cats!",
-      isRequired: true,
-    },
-    {
-      key: "emoji",
-      type: "CardTextInput",
-      bgColor: "bg-red-seven",
-      question: "One emoji or word that describes me?",
-      followUpQuestion: "",
-      isRequired: true,
-    },
-    {
       key: "neverForget",
       type: "CardTextInput",
-      bgColor: "bg-yellow-seven",
+      bgColor: "bg-green-seven",
       question: "Something I did that you'd #NeverForget?",
+      followUpQuestion: "and why?",
+      isRequired: true,
+    },
+    {
+      key: "advice",
+      type: "CardTextInput",
+      bgColor: "bg-red-seven",
+      question: "What do you want to say your younger self?",
+      followUpQuestion: "and why?",
+      isRequired: true,
+    },
+    {
+      key: "seenOrUnderstood",
+      type: "CardTextInput",
+      bgColor: "bg-yellow-seven",
+      question: "What makes you feel deeply seen or understood?",
       followUpQuestion: "and why?",
       isRequired: true,
     },
@@ -42,8 +41,8 @@ export const Part3Config: QuizPartConfig = {
       key: "dessert",
       type: "CardTextInput",
       bgColor: "bg-green-seven",
-      question: "If I were a dessert, what would I be?",
-      followUpQuestion: "Sweet or spicy?",
+      question: "If we were animals, what would we be?",
+      followUpQuestion: "Who would be the predator? We're both prey? We're both cats!",
       isRequired: false,
     },
     {
@@ -57,7 +56,7 @@ export const Part3Config: QuizPartConfig = {
     {
       key: "song",
       type: "CardTextInput",
-      bgColor: "bg-yellow-seven",
+      bgColor: "bg-blue-seven",
       question: "A song that reminds you of us?",
       followUpQuestion: "Why?",
       isRequired: false,

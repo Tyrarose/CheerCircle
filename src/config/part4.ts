@@ -7,11 +7,11 @@ export const Part4Config: QuizPartConfig = {
   title: "Part 04. Whimsy",
   totalSteps: 7,
   requiredFields: [
-    // "superpower", 
+    "superpower", 
     "season", 
-    // "era", 
-    // "googled", 
-    // "million"
+    "era", 
+    "googled", 
+    "million"
   ],
   steps: [
     {
@@ -25,7 +25,7 @@ export const Part4Config: QuizPartConfig = {
     {
       key: "season",
       type: "CardAndChips",
-      bgColor: "bg-red-seven",
+      bgColor: "bg-green-seven",
       question: "If you were a season, which one?", 
       followUpQuestion: "",
       options: [
@@ -37,24 +37,9 @@ export const Part4Config: QuizPartConfig = {
       isRequired: true,
     },
     {
-      key: "era",
-      type: "CardAndChips",
-      bgColor: "bg-yellow-seven",
-      question: "Live in any era?", 
-      followUpQuestion: "(hmm what would you do there)", 
-      options: [
-        { color: "bg-green-five", label: "Ancient Times" },
-        { color: "bg-yellow-five", label: "The 1800s" },
-        { color: "bg-red-five", label: "The Roaring '20s" },
-        { color: "bg-blue-five", label: "The '80s" },
-        { color: "bg-violet-five", label: "The Future" },
-      ],
-      isRequired: true,
-    },
-    {
       key: "googled",
       type: "CardTextInput",
-      bgColor: "bg-blue-seven",
+      bgColor: "bg-red-seven",
       question:  "What's the last thing you Googled?", 
       followUpQuestion: "",
       isRequired: true,

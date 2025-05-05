@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
-import Card from "@/components/molecules/Card";
-import ChipGroup from "@/components/molecules/ChipGroup";
+import Card from "@/components/molecules/quiz/Card";
+import ChipGroup from "@/components/molecules/quiz/ChipGroup";
 
 interface CardAndChipsProps {
   bgColor: string;

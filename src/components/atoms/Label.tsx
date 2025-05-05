@@ -3,11 +3,12 @@ import React from "react";
 interface LabelProps {
   text: React.ReactNode;
   isRequired?: boolean;
+  font?: string;
 }
 
-const Label = ({ text, isRequired = false }: LabelProps) => {
+const Label = ({ text, font, isRequired = false }: LabelProps) => {
   return (
-    <label className="block text-sm font-semibold text-black-five mb-1">
+    <label className={`block mb-1 ${font ? font : "text-black-five text-sm font-semibold"}`}>
       {text}
       {isRequired && <span className="text-red-500 ml-1">*</span>}
     </label>

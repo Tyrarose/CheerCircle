@@ -10,7 +10,7 @@ interface ChipProps {
 
 const Chip: FC<ChipProps> = ({ label, color, isSelected, onClick, opacity = 1 }) => {
   const baseColorClass = color;
-  const textColor = ["bg-red-five", "bg-pink", "bg-violet-five", "bg-black-five", "bg-blue-five"].includes(color)
+  const textColor = ["bg-red-five", "bg-blue-five", "bg-pink-five", "bg-violet-five", "bg-black-five"].includes(color)
     ? "text-white"
     : "text-black-five";
 

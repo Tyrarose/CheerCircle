@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import Card from "@/components/molecules/Card";
+import Card from "@/components/molecules/quiz/Card";
 import TextInput from "@/components/atoms/TextInput";
 
 interface CardTextInputProps {

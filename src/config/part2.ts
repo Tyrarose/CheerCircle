@@ -7,10 +7,9 @@ export const Part2Config: QuizPartConfig = {
   title: "Part 02. Faves",
   totalSteps: 6,
   requiredFields: [
-    // "lazyDayActivity",
-    "faveWeather",
-    // "currentObsession",
-    // "childhoodMemory",
+    "lazyDayActivity",
+    "currentObsession",
+    "childhoodMemory",
   ],
   steps: [
     {
@@ -19,21 +18,6 @@ export const Part2Config: QuizPartConfig = {
       bgColor: "bg-red-seven",
       question: "How do you chill on lazy days?",
       followUpQuestion: "What's your comfort food that day?",
-      isRequired: true,
-    },
-    {
-      key: "faveWeather",
-      type: "CardAndChips",
-      bgColor: "bg-blue-seven",
-      question: "Fave weather?",
-      followUpQuestion: "",
-      options: [
-        { color: "bg-yellow-five", label: "Sunny" },
-        { color: "bg-black-five", label: "Rainy" },
-        { color: "bg-white", label: "Cloudy" },
-        { color: "bg-blue-five", label: "Snowy" },
-        { color: "bg-green-five", label: "Breezy" },
-      ],
       isRequired: true,
     },
     {
@@ -48,7 +32,7 @@ export const Part2Config: QuizPartConfig = {
       key: "childhoodMemory",
       type: "CardTextInput",
       bgColor: "bg-yellow-seven",
-      question: "Fave childhood memory/game?",
+      question: "Best childhood memory/game?",
       followUpQuestion: "",
       isRequired: true,
     },

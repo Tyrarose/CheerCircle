@@ -8,7 +8,7 @@ export const Part5Config: QuizPartConfig = {
   totalSteps: 6,
   requiredFields: [
     "clothing",
-    // "door",
+    "door",
   ],
   steps: [
     {
@@ -20,7 +20,7 @@ export const Part5Config: QuizPartConfig = {
         { color: "bg-orange-five", label: "Hoodie" },
         { color: "bg-yellow-five", label: "Sunglasses" },
         { color: "bg-red-five", label: "Sneakers" },
-        { color: "bg-pink", label: "Fancy dress" },
+        { color: "bg-pink-five", label: "Fancy dress" },
         { color: "bg-blue-five", label: "Comfy pajamas" },
       ],
       isRequired: true,
@@ -43,13 +43,6 @@ export const Part5Config: QuizPartConfig = {
       key: "divider",
       type: "Divider",
       question: "",
-      isRequired: false,
-    },
-    {
-      key: "talkToAnimal",
-      type: "QandAlong",
-      question: "Talk to any animal for a day—which one? What would you ask?",
-      followUpQuestion: "Type here...",
       isRequired: false,
     },
     {
